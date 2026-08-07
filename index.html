@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>LogID — Laboratorio de I+D logístico</title>
+  <meta name="description" content="LogID: laboratorio de I+D aplicada a la cadena de suministro. Módulos independientes, cada uno resuelve un problema real de logística.">
+  <link rel="stylesheet" href="shared/styles/tokens.css?v=2">
+  <link rel="stylesheet" href="shared/shell/shell.css?v=2">
+</head>
+<body>
+
+  <!-- ===== Header (shell) ===== -->
+  <header class="lg-header">
+    <div class="lg-wrap lg-header__bar">
+      <div class="lg-logo">
+        <span class="lg-logo__mark">Log<span style="color:var(--lg-text)">ID</span></span>
+        <span class="lg-logo__tag">Laboratorio de I+D logístico</span>
+      </div>
+
+      <!-- Branding de empresa: EDITABLE (Doc 03 — variable, no hardcodeado) -->
+      <div class="lg-company">
+        <span class="lg-company__label">Empresa</span>
+        <input class="lg-company__input"
+               type="text"
+               data-brand-company-input
+               aria-label="Nombre de la empresa protagonista"
+               placeholder="NanoCargo"
+               maxlength="24">
+        <button class="lg-company__reset" data-brand-company-reset type="button" title="Volver a NanoCargo">reset</button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- ===== Hero ===== -->
+    <section class="lg-wrap lg-hero">
+      <h1 class="lg-stagger" data-glitch>Problemas reales de logística,<br>resueltos uno por uno.</h1>
+      <p class="lg-stagger">
+        LogID es un laboratorio de I+D aplicada a la cadena de suministro. No es un ERP
+        ni un producto único: es una colección de módulos independientes. Cada módulo
+        agarra un problema concreto que sufre <strong data-brand-company>NanoCargo</strong>
+        y le construye una solución funcionando, con la decisión técnica justificada.
+      </p>
+    </section>
+
+    <!-- ===== Grilla de módulos (vacía por ahora) ===== -->
+    <section class="lg-wrap lg-modules">
+      <h2 class="lg-modules__title lg-stagger">Módulos</h2>
+
+      <!-- Acá van las tarjetas de módulo. Al agregar un módulo nuevo en modules/NN-nombre/,
+           se suma su tarjeta dentro de este contenedor (Doc 03, checklist paso 3). -->
+      <div class="lg-grid" id="module-grid">
+
+        <a class="lg-card lg-stagger lg-scan" href="modules/01-zonas-peligrosas/">
+          <span class="lg-card__num">01</span>
+          <h3 class="lg-card__title">Detección temprana de zonas peligrosas</h3>
+          <p class="lg-card__desc">
+            Calcula cuánto pierde una distribuidora por descubrir en la calle los envíos
+            que caen en zona peligrosa, y cuánto ahorraría detectándolos antes de rutear.
+          </p>
+          <span class="lg-card__cta">abrir módulo &rarr;</span>
+        </a>
+
+      </div>
+    </section>
+  </main>
+
+  <!-- ===== Footer (shell) ===== -->
+  <footer class="lg-footer lg-wrap">
+    <span>LogID &middot; <span data-shell-year>2026</span></span>
+    <span>Protagoniza <span data-brand-company>NanoCargo</span> — empresa ficticia, nombre editable.</span>
+  </footer>
+
+  <script src="shared/branding/brand.js?v=2"></script>
+  <script src="shared/shell/shell.js?v=2"></script>
+  <script src="shared/particles/particles.js?v=2"></script>
+</body>
+</html>

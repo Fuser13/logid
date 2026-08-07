@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Zonas peligrosas — LogID</title>
+  <meta name="description" content="Calculadora de ahorro por detección temprana de envíos en zona peligrosa. Cargá tus números y vas a ver cuánto perdés hoy por el doble viaje.">
+
+  <!-- Leaflet -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+
+  <!-- shared/ : tokens + shell del hub -->
+  <link rel="stylesheet" href="../../shared/styles/tokens.css?v=2">
+  <link rel="stylesheet" href="../../shared/shell/shell.css?v=2">
+  <!-- estilos propios del módulo -->
+  <link rel="stylesheet" href="styles.css?v=3">
+</head>
+<body>
+
+  <!-- ===== Header (shell compartido) ===== -->
+  <header class="lg-header">
+    <div class="lg-wrap lg-header__bar">
+      <a class="lg-logo" href="../../index.html" style="text-decoration:none;color:inherit">
+        <span class="lg-logo__mark">Log<span style="color:var(--lg-text)">ID</span></span>
+        <span class="lg-logo__tag">Módulo 01 · Zonas peligrosas</span>
+      </a>
+
+      <div class="lg-company">
+        <span class="lg-company__label">Empresa</span>
+        <input class="lg-company__input"
+               type="text"
+               data-brand-company-input
+               aria-label="Nombre de la empresa protagonista"
+               placeholder="NanoCargo"
+               maxlength="24">
+        <button class="lg-company__reset" data-brand-company-reset type="button" title="Volver al default">reset</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="lg-wrap zp-main">
+
+    <!-- ===== Intro ===== -->
+    <section class="zp-intro">
+      <a class="zp-back lg-stagger" href="../../index.html">&larr; volver al laboratorio</a>
+      <h1 class="lg-stagger" data-glitch>Detección temprana de <span class="zp-hl">zonas peligrosas</span></h1>
+      <p class="lg-stagger">
+        Hoy <strong data-brand-company>NanoCargo</strong> descubre el problema en la calle:
+        el camión ya salió, el chofer marca zona peligrosa, no entrega, cobra igual el
+        intento y la mercadería vuelve a cruzar el país. Dos viajes tirados por envío.
+        Cargá tus números y mirá cuánto cuesta enterarse tarde.
+      </p>
+    </section>
+
+    <div class="zp-layout">
+
+      <!-- ===== Panel de inputs ===== -->
+      <form class="zp-panel zp-inputs lg-stagger" id="zp-form" autocomplete="off">
+        <h2 class="zp-panel__title">Tus números</h2>
+
+        <!-- 1. Volumen -->
+        <fieldset class="zp-field">
+          <legend class="zp-field__label">Volumen de envíos</legend>
+          <div class="zp-row">
+            <input class="zp-input" type="number" id="zp-volumen" name="volumen"
+                   min="1" max="100000" step="1" value="500" inputmode="numeric">
+            <div class="zp-segmented" role="radiogroup" aria-label="Período del volumen">
+              <input type="radio" name="periodo" id="zp-periodo-diario" value="diario" checked>
+              <label for="zp-periodo-diario">diario</label>
+              <input type="radio" name="periodo" id="zp-periodo-mensual" value="mensual">
+              <label for="zp-periodo-mensual">mensual</label>
+            </div>
+          </div>
+          <p class="zp-hint">Envíos que salen a ruta por período.</p>
+        </fieldset>
+
+        <!-- 2. Porcentaje en zona peligrosa -->
+        <fieldset class="zp-field">
+          <legend class="zp-field__label">Porcentaje en zona peligrosa</legend>
+          <div class="zp-row zp-row--slider">
+            <input class="zp-slider" type="range" id="zp-pct" name="pct"
+                   min="0" max="100" step="1" value="30"
+                   aria-label="Porcentaje de envíos en zona peligrosa">
+            <div class="zp-pct-box">
+              <input class="zp-input zp-input--pct" type="number" id="zp-pct-num"
+                     min="0" max="100" step="1" value="30" inputmode="numeric"
+                     aria-label="Porcentaje en número">
+              <span class="zp-pct-sign">%</span>
+            </div>
+          </div>
+          <p class="zp-hint">Este número se cumple <em>exacto</em> en el mapa.</p>
+        </fieldset>
+
+        <!-- 3. Costo por envío -->
+        <fieldset class="zp-field">
+          <legend class="zp-field__label">Costo por envío</legend>
+          <div class="zp-money">
+            <span class="zp-money__sign">$</span>
+            <input class="zp-input" type="number" id="zp-costo-envio" name="costoEnvio"
+                   min="0" step="100" value="4500" inputmode="numeric">
+          </div>
+          <p class="zp-hint">Valor unitario del flete normal.</p>
+        </fieldset>
+
+        <!-- 4. Costo del doble viaje (3 campos) -->
+        <fieldset class="zp-field zp-field--group">
+          <legend class="zp-field__label">Costo del doble viaje</legend>
+
+          <label class="zp-sub" for="zp-flete-ida">Flete de ida <span>sacar el envío a ruta</span></label>
+          <div class="zp-money">
+            <span class="zp-money__sign">$</span>
+            <input class="zp-input" type="number" id="zp-flete-ida" name="fleteIda"
+                   min="0" step="100" value="3800" inputmode="numeric">
+          </div>
+
+          <label class="zp-sub" for="zp-flete-vuelta">Flete de vuelta <span>devolverlo al remitente</span></label>
+          <div class="zp-money">
+            <span class="zp-money__sign">$</span>
+            <input class="zp-input" type="number" id="zp-flete-vuelta" name="fleteVuelta"
+                   min="0" step="100" value="3800" inputmode="numeric">
+          </div>
+
+          <label class="zp-sub" for="zp-pago-chofer">Pago al chofer <span>por intento de no-entrega</span></label>
+          <div class="zp-money">
+            <span class="zp-money__sign">$</span>
+            <input class="zp-input" type="number" id="zp-pago-chofer" name="pagoChofer"
+                   min="0" step="100" value="2500" inputmode="numeric">
+          </div>
+
+          <p class="zp-hint zp-hint--total">
+            Costo por envío fallido: <strong id="zp-costo-fallido">$10.100</strong>
+          </p>
+        </fieldset>
+
+        <button class="zp-calc" type="submit" id="zp-calcular">Calcular</button>
+      </form>
+
+      <!-- ===== Mapa + resultados ===== -->
+      <div class="zp-right">
+
+        <section class="zp-panel zp-map-panel lg-stagger">
+          <div class="zp-map-head">
+            <h2 class="zp-panel__title">Simulación · provincia de <span id="zp-provincia">Buenos Aires</span></h2>
+            <span class="zp-badge" id="zp-map-badge">esperando cálculo</span>
+          </div>
+          <!-- Gradiente del relleno de zona. Vive en un <svg> aparte: las referencias
+               url(#id) resuelven a nivel documento, así que el path que dibuja Leaflet
+               lo encuentra igual. -->
+          <svg class="zp-defs" aria-hidden="true" focusable="false">
+            <defs>
+              <radialGradient id="zp-zona-fill" cx="50%" cy="50%" r="55%">
+                <stop offset="0%" stop-color="#ff4d6d" stop-opacity="0.34" />
+                <stop offset="55%" stop-color="#ff4d6d" stop-opacity="0.13" />
+                <stop offset="100%" stop-color="#ff2d55" stop-opacity="0.015" />
+              </radialGradient>
+            </defs>
+          </svg>
+
+          <div class="zp-map-wrap" id="zp-map-wrap">
+            <div id="zp-map" class="zp-map"></div>
+
+            <!-- HUD del zoom-tour: se muestra al aterrizar en cada zona -->
+            <div class="zp-tour" id="zp-tour" hidden aria-live="polite">
+              <div class="zp-tour__card">
+                <span class="zp-tour__zona" id="zp-tour-zona"></span>
+                <p class="zp-tour__dato" id="zp-tour-dato"></p>
+              </div>
+              <span class="zp-tour__skip">click en cualquier lado para saltear</span>
+            </div>
+          </div>
+          <p class="zp-disclaimer">
+            Polígonos y pines <strong>simulados</strong>: no representan barrios reales.
+            Lo que se demuestra es la lógica y el ahorro, no la ubicación.
+          </p>
+        </section>
+
+        <!-- Panel de resultados: vacío hasta el paso 2 -->
+        <section class="zp-panel zp-results lg-stagger lg-scan" id="zp-results" aria-live="polite">
+          <div class="zp-results__empty" id="zp-results-empty">
+            <span class="zp-results__empty-mark">// sin cálculo</span>
+            <p>Cargá tus números y apretá <strong>Calcular</strong>.</p>
+          </div>
+        </section>
+
+      </div>
+    </div>
+  </main>
+
+  <footer class="lg-footer lg-wrap">
+    <span>LogID &middot; Módulo 01 &middot; <span data-shell-year>2026</span></span>
+    <span>Simulación para <span data-brand-company>NanoCargo</span> — datos ficticios.</span>
+  </footer>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="../../shared/branding/brand.js?v=2"></script>
+  <script src="../../shared/shell/shell.js?v=2"></script>
+  <script src="../../shared/particles/particles.js?v=2"></script>
+  <script src="logic.js?v=4"></script>
+</body>
+</html>

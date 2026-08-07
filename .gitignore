@@ -1,0 +1,26 @@
+# --- Config local de dev (no va al repo ni al deploy) ---
+# launch.json apunta a un intérprete y un puerto de esta máquina.
+.claude/launch.json
+.claude/settings.local.json
+*.local.json
+
+# --- Basura del sistema operativo ---
+# desktop.ini y Thumbs.db los genera Windows/OneDrive dentro de las carpetas.
+desktop.ini
+Thumbs.db
+ehthumbs.db
+$RECYCLE.BIN/
+.DS_Store
+
+# --- Editores ---
+.vscode/
+.idea/
+*.swp
+*~
+
+# --- Por si algún día entra tooling (hoy el sitio es estático puro) ---
+node_modules/
+npm-debug.log*
+yarn-error.log*
+.env
+.env.local

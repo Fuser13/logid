@@ -1,0 +1,276 @@
+/* LogID — Shell del hub: header, footer, navegación.
+   Doc 03: "cómo se ve la navegación entre módulos". */
+
+.lg-wrap {
+  max-width: var(--lg-maxw);
+  margin: 0 auto;
+  padding: 0 calc(var(--lg-space) * 3);
+}
+
+/* ---------- Header ---------- */
+.lg-header {
+  border-bottom: 1px solid var(--lg-line);
+  background: linear-gradient(180deg, var(--lg-surface), var(--lg-bg));
+}
+
+.lg-header__bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: calc(var(--lg-space) * 2);
+  padding: calc(var(--lg-space) * 2) 0;
+  flex-wrap: wrap;
+}
+
+.lg-logo {
+  display: flex;
+  align-items: baseline;
+  gap: var(--lg-space);
+  font-family: var(--lg-font-mono);
+  font-size: 1.35rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.lg-logo__mark {
+  color: var(--lg-accent);
+  text-shadow: var(--lg-glow);
+}
+
+.lg-logo__tag {
+  font-family: var(--lg-font);
+  font-size: 0.8rem;
+  font-weight: 400;
+  color: var(--lg-text-dim);
+}
+
+/* ---------- Selector de empresa (branding editable) ---------- */
+.lg-company {
+  display: flex;
+  align-items: center;
+  gap: var(--lg-space);
+  background: var(--lg-surface-2);
+  border: 1px solid var(--lg-line);
+  border-radius: var(--lg-radius);
+  padding: calc(var(--lg-space) * 0.75) calc(var(--lg-space) * 1.5);
+}
+
+.lg-company__label {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--lg-text-dim);
+  white-space: nowrap;
+}
+
+.lg-company__input {
+  background: transparent;
+  border: none;
+  border-bottom: 1px dashed var(--lg-line);
+  color: var(--lg-accent);
+  font-family: var(--lg-font-mono);
+  font-size: 0.95rem;
+  font-weight: 600;
+  padding: 2px 4px;
+  width: 13ch;
+}
+
+.lg-company__input:focus {
+  outline: none;
+  border-bottom-color: var(--lg-accent);
+}
+
+.lg-company__reset {
+  background: none;
+  border: none;
+  color: var(--lg-text-dim);
+  cursor: pointer;
+  font-size: 0.75rem;
+  padding: 2px 4px;
+}
+
+.lg-company__reset:hover {
+  color: var(--lg-text);
+}
+
+/* ---------- Hero ---------- */
+.lg-hero {
+  padding: calc(var(--lg-space) * 8) 0 calc(var(--lg-space) * 5);
+}
+
+.lg-hero h1 {
+  font-size: clamp(1.9rem, 5vw, 3rem);
+  line-height: 1.1;
+  margin: 0 0 var(--lg-space);
+  letter-spacing: -0.03em;
+}
+
+.lg-hero p {
+  color: var(--lg-text-dim);
+  max-width: 62ch;
+  margin: 0;
+}
+
+/* ---------- Grilla de módulos ---------- */
+.lg-modules {
+  padding-bottom: calc(var(--lg-space) * 8);
+}
+
+.lg-modules__title {
+  font-family: var(--lg-font-mono);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--lg-text-dim);
+  margin: 0 0 calc(var(--lg-space) * 2);
+}
+
+.lg-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: calc(var(--lg-space) * 2);
+}
+
+/* Tarjeta de módulo: toda la tarjeta es el link. */
+.lg-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--lg-space);
+  background: var(--lg-surface);
+  border: 1px solid var(--lg-line);
+  border-radius: var(--lg-radius);
+  padding: calc(var(--lg-space) * 2.5);
+  text-decoration: none;
+  color: inherit;
+  transition: border-color 160ms ease, transform 160ms ease, box-shadow 160ms ease;
+}
+
+.lg-card:hover {
+  border-color: var(--lg-accent);
+  transform: translateY(-2px);
+}
+
+.lg-card:focus-visible {
+  outline: 2px solid var(--lg-accent);
+  outline-offset: 3px;
+}
+
+.lg-card__num {
+  font-family: var(--lg-font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.14em;
+  color: var(--lg-accent);
+}
+
+.lg-card__title {
+  margin: 0;
+  font-size: 1.05rem;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+}
+
+.lg-card__desc {
+  margin: 0;
+  font-size: 0.82rem;
+  color: var(--lg-text-dim);
+  flex: 1;
+}
+
+.lg-card__cta {
+  font-family: var(--lg-font-mono);
+  font-size: 0.72rem;
+  color: var(--lg-accent-2);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lg-card {
+    transition: none;
+  }
+  .lg-card:hover {
+    transform: none;
+  }
+}
+
+/* Estado vacío: queda para cuando el grid arranque sin módulos. */
+.lg-empty {
+  border: 1px dashed var(--lg-line);
+  border-radius: var(--lg-radius);
+  padding: calc(var(--lg-space) * 5);
+  text-align: center;
+  color: var(--lg-text-dim);
+  font-family: var(--lg-font-mono);
+  font-size: 0.85rem;
+}
+
+/* ---------- Footer ---------- */
+.lg-footer {
+  border-top: 1px solid var(--lg-line);
+  padding: calc(var(--lg-space) * 3) 0;
+  color: var(--lg-text-dim);
+  font-size: 0.8rem;
+  display: flex;
+  justify-content: space-between;
+  gap: calc(var(--lg-space) * 2);
+  flex-wrap: wrap;
+}
+
+/* ========== IDENTIDAD VISUAL — retro-gaming / arcade ========== */
+
+/* --- Stagger entry: fade + slide-up escalonado --- */
+.lg-stagger {
+  opacity: 0;
+  transform: translateY(18px);
+}
+
+.lg-stagger--in {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 420ms ease, transform 420ms ease;
+}
+
+/* --- Glitch arcade: entrada del hero --- */
+@keyframes lg-glitch {
+  0%        { text-shadow:  3px 0 rgba(255,77,109,0.8), -3px 0 rgba(77,184,255,0.8); }
+  14%       { text-shadow: -2px 1px rgba(255,77,109,0.6),  2px -1px rgba(77,184,255,0.6); }
+  28%       { text-shadow:  1px 0 rgba(255,77,109,0.3), -1px 0 rgba(77,184,255,0.3); }
+  42%, 100% { text-shadow: none; }
+}
+
+.lg-glitch {
+  animation: lg-glitch 300ms linear 1 both;
+}
+
+/* --- Hover: glow de fósforo verde (card) --- */
+.lg-card:hover {
+  box-shadow: 0 0 18px rgba(53, 240, 160, 0.12), var(--lg-shadow);
+}
+
+/* --- CRT scanlines (ultra-sutil, textura retro) --- */
+.lg-scan { position: relative; }
+.lg-scan::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent 0px,
+    transparent 2px,
+    rgba(0, 0, 0, 0.035) 2px,
+    rgba(0, 0, 0, 0.035) 4px
+  );
+  pointer-events: none;
+  border-radius: inherit;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lg-stagger {
+    opacity: 1;
+    transform: none;
+  }
+  .lg-stagger--in {
+    transition: none;
+  }
+  .lg-glitch {
+    animation: none;
+  }
+}

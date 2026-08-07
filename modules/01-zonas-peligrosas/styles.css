@@ -1,0 +1,981 @@
+/* Módulo 01 — Zonas peligrosas.
+   Estilos PROPIOS del módulo. Los tokens (paleta, tipografías, radios) vienen de
+   shared/styles/tokens.css; el header/footer de shared/shell/shell.css. */
+
+/* ---------- Layout ---------- */
+.zp-main {
+  padding-bottom: calc(var(--lg-space) * 8);
+}
+
+.zp-intro {
+  padding: calc(var(--lg-space) * 5) 0 calc(var(--lg-space) * 4);
+}
+
+.zp-back {
+  display: inline-block;
+  font-family: var(--lg-font-mono);
+  font-size: 0.75rem;
+  color: var(--lg-text-dim);
+  text-decoration: none;
+  margin-bottom: calc(var(--lg-space) * 2);
+}
+
+.zp-back:hover {
+  color: var(--lg-accent);
+}
+
+.zp-intro h1 {
+  font-size: clamp(1.7rem, 4.2vw, 2.6rem);
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+  margin: 0 0 var(--lg-space);
+}
+
+.zp-hl {
+  color: var(--lg-danger);
+  text-shadow: 0 0 22px rgba(255, 77, 109, 0.35);
+}
+
+.zp-intro p {
+  color: var(--lg-text-dim);
+  max-width: 68ch;
+  margin: 0;
+}
+
+.zp-layout {
+  display: grid;
+  grid-template-columns: 340px minmax(0, 1fr);
+  gap: calc(var(--lg-space) * 3);
+  align-items: start;
+}
+
+.zp-right {
+  display: grid;
+  gap: calc(var(--lg-space) * 3);
+  min-width: 0;
+}
+
+@media (max-width: 900px) {
+  .zp-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ---------- Panel base ---------- */
+.zp-panel {
+  background: var(--lg-surface);
+  border: 1px solid var(--lg-line);
+  border-radius: var(--lg-radius);
+  box-shadow: var(--lg-shadow);
+  padding: calc(var(--lg-space) * 3);
+}
+
+.zp-panel__title {
+  font-family: var(--lg-font-mono);
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--lg-text-dim);
+  margin: 0 0 calc(var(--lg-space) * 2.5);
+}
+
+/* ---------- Formulario ---------- */
+.zp-inputs {
+  position: sticky;
+  top: calc(var(--lg-space) * 2);
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--lg-space) * 2.5);
+}
+
+@media (max-width: 900px) {
+  .zp-inputs {
+    position: static;
+  }
+}
+
+.zp-field {
+  border: none;
+  margin: 0;
+  padding: 0;
+}
+
+.zp-field--group {
+  border-top: 1px solid var(--lg-line);
+  padding-top: calc(var(--lg-space) * 2.5);
+}
+
+.zp-field__label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--lg-text);
+  padding: 0;
+  margin-bottom: var(--lg-space);
+}
+
+.zp-hint {
+  font-size: 0.72rem;
+  color: var(--lg-text-dim);
+  margin: calc(var(--lg-space) * 0.75) 0 0;
+}
+
+.zp-hint--total {
+  font-family: var(--lg-font-mono);
+  color: var(--lg-warn);
+  margin-top: calc(var(--lg-space) * 1.5);
+}
+
+.zp-hint--total strong {
+  color: var(--lg-danger);
+}
+
+.zp-row {
+  display: flex;
+  gap: var(--lg-space);
+  align-items: center;
+}
+
+.zp-input {
+  background: var(--lg-bg);
+  border: 1px solid var(--lg-line);
+  border-radius: 10px;
+  color: var(--lg-text);
+  font-family: var(--lg-font-mono);
+  font-size: 0.95rem;
+  padding: calc(var(--lg-space) * 1.1) calc(var(--lg-space) * 1.4);
+  width: 100%;
+  min-width: 0;
+  transition: border-color 150ms ease, box-shadow 150ms ease;
+}
+
+.zp-input:hover:not(:focus) {
+  border-color: rgba(53, 240, 160, 0.25);
+}
+
+.zp-input:focus {
+  outline: none;
+  border-color: var(--lg-accent);
+  box-shadow: 0 0 0 3px rgba(53, 240, 160, 0.14);
+}
+
+/* Sub-label de los 3 campos del doble viaje */
+.zp-sub {
+  display: block;
+  font-size: 0.78rem;
+  color: var(--lg-text);
+  margin: calc(var(--lg-space) * 1.5) 0 calc(var(--lg-space) * 0.6);
+}
+
+.zp-sub span {
+  color: var(--lg-text-dim);
+  font-size: 0.7rem;
+}
+
+/* Campo de dinero */
+.zp-money {
+  display: flex;
+  align-items: center;
+  gap: 0;
+}
+
+.zp-money__sign {
+  font-family: var(--lg-font-mono);
+  color: var(--lg-text-dim);
+  background: var(--lg-surface-2);
+  border: 1px solid var(--lg-line);
+  border-right: none;
+  border-radius: 10px 0 0 10px;
+  padding: calc(var(--lg-space) * 1.1) calc(var(--lg-space) * 1.2);
+  font-size: 0.9rem;
+}
+
+.zp-money .zp-input {
+  border-radius: 0 10px 10px 0;
+}
+
+/* Selector diario/mensual */
+.zp-segmented {
+  display: flex;
+  background: var(--lg-bg);
+  border: 1px solid var(--lg-line);
+  border-radius: 10px;
+  padding: 3px;
+  flex-shrink: 0;
+}
+
+.zp-segmented input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.zp-segmented label {
+  font-family: var(--lg-font-mono);
+  font-size: 0.72rem;
+  color: var(--lg-text-dim);
+  padding: calc(var(--lg-space) * 0.8) calc(var(--lg-space) * 1.2);
+  border-radius: 7px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.zp-segmented input:checked + label {
+  background: var(--lg-surface-2);
+  color: var(--lg-accent);
+}
+
+.zp-segmented input:focus-visible + label {
+  outline: 2px solid var(--lg-accent);
+}
+
+/* Slider de porcentaje */
+.zp-row--slider {
+  gap: calc(var(--lg-space) * 1.5);
+}
+
+.zp-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  flex: 1;
+  height: 6px;
+  border-radius: 6px;
+  background: linear-gradient(90deg, var(--lg-danger) 0%, var(--lg-danger) var(--zp-pct, 30%), var(--lg-line) var(--zp-pct, 30%), var(--lg-line) 100%);
+  cursor: pointer;
+}
+
+.zp-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--lg-text);
+  border: 3px solid var(--lg-danger);
+  cursor: grab;
+}
+
+.zp-slider::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--lg-text);
+  border: 3px solid var(--lg-danger);
+  cursor: grab;
+}
+
+.zp-pct-box {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.zp-input--pct {
+  width: 4.5ch;
+  text-align: right;
+  border-radius: 10px 0 0 10px;
+  border-right: none;
+  padding-right: 2px;
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+/* El spinner nativo se come el ancho del campo de %: el slider ya cubre ese rol. */
+.zp-input--pct::-webkit-outer-spin-button,
+.zp-input--pct::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.zp-pct-sign {
+  font-family: var(--lg-font-mono);
+  color: var(--lg-text-dim);
+  background: var(--lg-bg);
+  border: 1px solid var(--lg-line);
+  border-left: none;
+  border-radius: 0 10px 10px 0;
+  padding: calc(var(--lg-space) * 1.1) calc(var(--lg-space) * 1) calc(var(--lg-space) * 1.1) 2px;
+  font-size: 0.9rem;
+}
+
+/* Botón Calcular */
+.zp-calc {
+  margin-top: var(--lg-space);
+  width: 100%;
+  background: var(--lg-accent);
+  color: #05130c;
+  border: none;
+  border-radius: var(--lg-radius);
+  font-family: var(--lg-font-mono);
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  padding: calc(var(--lg-space) * 1.8);
+  cursor: pointer;
+  box-shadow: var(--lg-glow);
+  transition: transform 0.08s ease, box-shadow 0.15s ease;
+}
+
+.zp-calc:hover {
+  box-shadow: 0 0 24px rgba(53, 240, 160, 0.45), var(--lg-glow);
+}
+
+.zp-calc:active {
+  transform: translateY(2px);
+  box-shadow: 0 0 32px rgba(53, 240, 160, 0.55), var(--lg-glow);
+}
+
+.zp-calc:focus-visible {
+  outline: 3px solid var(--lg-accent-2);
+  outline-offset: 2px;
+}
+
+/* ---------- Mapa ---------- */
+.zp-map-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--lg-space);
+  flex-wrap: wrap;
+}
+
+.zp-badge {
+  font-family: var(--lg-font-mono);
+  font-size: 0.68rem;
+  color: var(--lg-text-dim);
+  border: 1px solid var(--lg-line);
+  border-radius: 999px;
+  padding: 3px 10px;
+  white-space: nowrap;
+}
+
+.zp-map-wrap {
+  position: relative;
+}
+
+/* Los pines crecen con el zoom por escala, no redibujando 500 paths.
+   El scale agranda también el halo, que es lo que se busca de cerca. */
+.zp-pin {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.zp-map-wrap--medio .zp-pin {
+  transform: scale(1.7);
+}
+
+.zp-map-wrap--cerca .zp-pin {
+  transform: scale(2.2);
+}
+
+.zp-map {
+  height: 460px;
+  border-radius: var(--lg-radius);
+  border: 1px solid var(--lg-line);
+  background: var(--lg-bg);
+  z-index: 0;
+}
+
+@media (max-width: 700px) {
+  .zp-map {
+    height: 340px;
+  }
+}
+
+/* ---------- Etiquetas flotantes de la vista final ---------- */
+
+/* El divIcon mide 0×0 y se ancla exacto en el borde superior de la zona; la
+   píldora se posiciona sola por transform, así no hay que calcular offsets. */
+.zp-flota {
+  pointer-events: none;
+}
+
+.zp-flota__pill {
+  --zp-y: -170%; /* la píldora flota arriba de la mancha... */
+  --zp-extra: 0px; /* corrimiento anti-superposición, lo calcula logic.js */
+  --zp-x: 0px;     /* corrimiento lateral para no salirse del marco */
+  position: absolute;
+  left: 0;
+  top: 0;
+  transform: translate(
+    calc(-50% + var(--zp-x)),
+    calc(var(--zp-y) + var(--zp-extra))
+  );
+  white-space: nowrap;
+  font-family: var(--lg-font-mono);
+  font-size: 0.6rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--lg-text);
+  background: rgba(10, 11, 16, 0.85);
+  border: 1px solid rgba(255, 77, 109, 0.45);
+  border-radius: 999px;
+  padding: 2px 8px;
+}
+
+.zp-flota__pill b {
+  color: var(--lg-danger);
+  font-weight: 700;
+}
+
+/* ...salvo que la zona esté pegada al borde de arriba, donde se recortaba
+   contra el marco del mapa. Ahí cuelga para abajo. */
+.zp-flota__pill--abajo {
+  --zp-y: 80%;
+}
+
+/* Hilito que ata la píldora a su mancha. Compensa el corrimiento lateral para
+   seguir apuntando a la zona, no al centro de la píldora. */
+.zp-flota__pill::after {
+  content: '';
+  position: absolute;
+  left: calc(50% - var(--zp-x));
+  top: 100%;
+  width: 1px;
+  height: 9px;
+  background: rgba(255, 77, 109, 0.45);
+}
+
+.zp-flota__pill--abajo::after {
+  top: auto;
+  bottom: 100%;
+}
+
+@keyframes zp-flota-in {
+  from {
+    opacity: 0;
+    transform: translate(
+      calc(-50% + var(--zp-x)),
+      calc(var(--zp-y) + var(--zp-extra) + 50%)
+    );
+  }
+  to {
+    opacity: 1;
+    transform: translate(
+      calc(-50% + var(--zp-x)),
+      calc(var(--zp-y) + var(--zp-extra))
+    );
+  }
+}
+
+.zp-flota__pill--entra {
+  animation: zp-flota-in 320ms ease-out both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .zp-flota__pill--entra {
+    animation: none;
+  }
+}
+
+/* ---------- HUD del zoom-tour ---------- */
+.zp-tour {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: calc(var(--lg-space) * 2);
+  z-index: 500; /* sobre los panes de Leaflet, debajo de sus controles */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--lg-space);
+  pointer-events: none; /* el HUD no roba clicks: el mapa sigue vivo */
+  padding: 0 calc(var(--lg-space) * 2);
+}
+
+.zp-tour__card {
+  background: rgba(10, 11, 16, 0.92);
+  border: 1px solid rgba(255, 77, 109, 0.5);
+  border-radius: var(--lg-radius);
+  padding: calc(var(--lg-space) * 1.5) calc(var(--lg-space) * 2.5);
+  text-align: center;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+  max-width: 100%;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 260ms ease, transform 260ms ease;
+}
+
+.zp-tour--visible .zp-tour__card {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.zp-tour__zona {
+  display: block;
+  font-family: var(--lg-font-mono);
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: var(--lg-danger);
+  margin-bottom: 4px;
+}
+
+.zp-tour__dato {
+  margin: 0;
+  font-family: var(--lg-font-mono);
+  font-size: 0.88rem;
+  color: var(--lg-text);
+  font-variant-numeric: tabular-nums;
+}
+
+.zp-tour__skip {
+  font-family: var(--lg-font-mono);
+  font-size: 0.62rem;
+  color: var(--lg-text-dim);
+  background: rgba(10, 11, 16, 0.75);
+  border-radius: 999px;
+  padding: 2px 10px;
+  opacity: 0;
+  transition: opacity 260ms ease 120ms;
+}
+
+.zp-tour--visible .zp-tour__skip {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .zp-tour__card,
+  .zp-tour__skip {
+    transition: none;
+  }
+}
+
+.zp-disclaimer {
+  font-size: 0.7rem;
+  color: var(--lg-text-dim);
+  margin: calc(var(--lg-space) * 1.5) 0 0;
+}
+
+/* Leaflet en dark: atenuar los controles y la atribución */
+.leaflet-container {
+  background: #0d1017;
+  font-family: var(--lg-font);
+}
+
+.leaflet-control-attribution {
+  background: rgba(10, 11, 16, 0.8) !important;
+  color: var(--lg-text-dim) !important;
+  font-size: 0.62rem !important;
+}
+
+.leaflet-control-attribution a {
+  color: var(--lg-text-dim) !important;
+}
+
+.leaflet-bar a {
+  background: var(--lg-surface-2) !important;
+  color: var(--lg-text) !important;
+  border-bottom-color: var(--lg-line) !important;
+}
+
+.leaflet-bar a:hover {
+  background: var(--lg-line) !important;
+}
+
+.zp-badge--activo {
+  color: var(--lg-danger);
+  border-color: rgba(255, 77, 109, 0.45);
+}
+
+/* Pines y zonas dibujados sobre el mapa.
+   Ni los pines ni las zonas llevan filter: el drop-shadow se repinta en cada
+   frame, y ahora la zona además pulsa. El volumen lo da el gradiente. */
+
+/* El contenedor de los defs no ocupa lugar; sólo aloja el gradiente. */
+.zp-defs {
+  position: absolute;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+}
+
+/* Relleno de energía contenida en vez de mancha de pintura: el gradiente
+   radial es objectBoundingBox, así que cada mancha recibe el suyo centrado. */
+.zp-zona {
+  fill: url(#zp-zona-fill);
+}
+
+/* El radar respira: sólo stroke-opacity y stroke-width, y son 3-6 elementos. */
+@keyframes zp-radar {
+  0%,
+  100% {
+    stroke-opacity: 0.55;
+    stroke-width: 1.6;
+  }
+  50% {
+    stroke-opacity: 1;
+    stroke-width: 3.2;
+  }
+}
+
+.zp-zona--pulso {
+  animation: zp-radar 2600ms ease-in-out infinite;
+}
+
+/* Partículas dentro de la mancha: pocas, lentas, sin stroke ni filtro. */
+@keyframes zp-part-flota {
+  0% {
+    opacity: 0.12;
+    transform: translate(0, 0);
+  }
+  50% {
+    opacity: 0.65;
+    transform: translate(3px, -5px);
+  }
+  100% {
+    opacity: 0.12;
+    transform: translate(-2px, 2px);
+  }
+}
+
+.zp-part {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: zp-part-flota 7s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .zp-zona--pulso,
+  .zp-part {
+    animation: none;
+  }
+}
+
+/* ---------- El momento wow: lluvia de pines ---------- */
+
+/* Los pines caen desde arriba y rebotan al aterrizar. Solo se animan opacity y
+   transform (nada que dispare layout), y el delay lo lleva el navegador: JS no
+   toca un solo frame durante la lluvia. */
+@keyframes zp-drop {
+  0% {
+    opacity: 0;
+    transform: translateY(-24px) scale(0.35);
+  }
+  65% {
+    opacity: 1;
+    transform: translateY(2px) scale(1.15);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Sin will-change: son 500 elementos y pedir una capa por pin es peor que no
+   pedir ninguna. Los paths SVG comparten un solo <svg> igual. */
+.zp-pin--cae {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: zp-drop 400ms cubic-bezier(0.33, 1.2, 0.62, 1) both;
+}
+
+/* Los polígonos se dibujan primero: cuando llueve, el terreno ya está marcado. */
+@keyframes zp-zona-in {
+  from {
+    opacity: 0;
+    transform: scale(0.88);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.zp-zona--entra {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: zp-zona-in 420ms ease-out both;
+}
+
+/* Nadie pidió la coreografía: si el sistema dice basta, todo aparece directo. */
+@media (prefers-reduced-motion: reduce) {
+  .zp-pin--cae,
+  .zp-zona--entra {
+    animation: none;
+  }
+}
+
+/* ---------- Resultados ---------- */
+.zp-results__empty {
+  text-align: center;
+  padding: calc(var(--lg-space) * 4) 0;
+  color: var(--lg-text-dim);
+}
+
+.zp-results__empty-mark {
+  font-family: var(--lg-font-mono);
+  font-size: 0.8rem;
+  color: var(--lg-line);
+  display: block;
+  margin-bottom: var(--lg-space);
+}
+
+.zp-results__empty p {
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+/* El número grande: el remate del módulo */
+.zp-ahorro {
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--lg-space) * 0.5);
+  padding: calc(var(--lg-space) * 2) 0 calc(var(--lg-space) * 3);
+  border-bottom: 1px solid var(--lg-line);
+  margin-bottom: calc(var(--lg-space) * 3);
+}
+
+.zp-ahorro__kicker {
+  font-family: var(--lg-font-mono);
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--lg-text-dim);
+}
+
+/* La unidad va sobre la línea de base del número, no debajo como etiqueta:
+   "$ 1.515.000 / día" se lee como una sola magnitud. */
+.zp-ahorro__linea {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: calc(var(--lg-space) * 0.75);
+}
+
+.zp-ahorro__num {
+  font-family: var(--lg-font-mono);
+  font-size: clamp(2.1rem, 6.5vw, 3.4rem);
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+  color: var(--lg-accent);
+  text-shadow: var(--lg-glow);
+  font-variant-numeric: tabular-nums;
+}
+
+.zp-ahorro__unidad {
+  font-family: var(--lg-font-mono);
+  font-size: clamp(1.05rem, 2.6vw, 1.5rem);
+  line-height: 1;
+  color: var(--lg-accent);
+  opacity: 0.65;
+  letter-spacing: -0.01em;
+}
+
+/* ---------- Proyección anual: segundo protagonista ---------- */
+.zp-anual {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  margin-top: calc(var(--lg-space) * 1.75);
+  padding-top: calc(var(--lg-space) * 1.75);
+  border-top: 1px dashed var(--lg-line);
+}
+
+.zp-anual__label {
+  font-family: var(--lg-font-mono);
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--lg-text-dim);
+}
+
+.zp-anual__linea {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: calc(var(--lg-space) * 1.25);
+}
+
+.zp-anual__num {
+  font-family: var(--lg-font-mono);
+  font-size: clamp(1.5rem, 3.6vw, 2.1rem);
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  color: var(--lg-accent-2);
+  font-variant-numeric: tabular-nums;
+  text-shadow: 0 0 22px rgba(77, 184, 255, 0.22);
+}
+
+.zp-anual__factor {
+  font-style: normal;
+  font-family: var(--lg-font-mono);
+  font-size: 0.74rem;
+  color: var(--lg-text-dim);
+  border: 1px solid var(--lg-line);
+  border-radius: 999px;
+  padding: 2px 9px;
+  white-space: nowrap;
+}
+
+/* Contraste: lo que cuesta un envío que llega vs uno que vuelve */
+.zp-contraste {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: stretch;
+  gap: var(--lg-space);
+  margin-bottom: calc(var(--lg-space) * 3);
+}
+
+.zp-contraste__item {
+  background: var(--lg-bg);
+  border: 1px solid var(--lg-line);
+  border-radius: 10px;
+  padding: calc(var(--lg-space) * 1.5);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.zp-contraste__item--mal {
+  border-color: rgba(255, 77, 109, 0.4);
+  background: rgba(255, 77, 109, 0.07);
+}
+
+.zp-contraste__label {
+  font-size: 0.7rem;
+  color: var(--lg-text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.zp-contraste__val {
+  font-family: var(--lg-font-mono);
+  font-size: 1.35rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--lg-accent);
+}
+
+.zp-contraste__item--mal .zp-contraste__val {
+  color: var(--lg-danger);
+}
+
+.zp-contraste__note {
+  font-size: 0.68rem;
+  color: var(--lg-line);
+}
+
+.zp-contraste__vs {
+  align-self: center;
+  font-family: var(--lg-font-mono);
+  font-size: 0.72rem;
+  color: var(--lg-text-dim);
+}
+
+.zp-contraste__nota {
+  grid-column: 1 / -1;
+  margin: 0;
+  font-size: 0.75rem;
+  color: var(--lg-warn);
+  text-align: center;
+}
+
+/* Desglose en tarjetas */
+.zp-desglose {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: calc(var(--lg-space) * 1.5);
+}
+
+.zp-stat {
+  background: var(--lg-surface-2);
+  border: 1px solid var(--lg-line);
+  border-left: 3px solid var(--lg-line);
+  border-radius: 10px;
+  padding: calc(var(--lg-space) * 1.75);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.zp-stat--danger {
+  border-left-color: var(--lg-danger);
+}
+
+.zp-stat--ok {
+  border-left-color: var(--lg-accent);
+}
+
+.zp-stat__label {
+  font-size: 0.72rem;
+  color: var(--lg-text-dim);
+}
+
+.zp-stat__value {
+  font-family: var(--lg-font-mono);
+  font-size: 1.25rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.zp-stat--danger .zp-stat__value {
+  color: var(--lg-danger);
+}
+
+.zp-stat--ok .zp-stat__value {
+  color: var(--lg-accent);
+}
+
+.zp-stat__note {
+  font-size: 0.68rem;
+  color: var(--lg-line);
+}
+
+/* La cuenta, escrita como la haría el usuario en una servilleta */
+.zp-formula {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: calc(var(--lg-space) * 0.75);
+  font-family: var(--lg-font-mono);
+  font-size: 0.78rem;
+  color: var(--lg-text-dim);
+  background: var(--lg-bg);
+  border: 1px solid var(--lg-line);
+  border-radius: 10px;
+  padding: calc(var(--lg-space) * 1.5);
+  margin: calc(var(--lg-space) * 2.5) 0 0;
+}
+
+.zp-formula strong {
+  color: var(--lg-danger);
+}
+
+/* Prueba de que el mapa no miente */
+.zp-check {
+  font-family: var(--lg-font-mono);
+  font-size: 0.72rem;
+  color: var(--lg-text-dim);
+  margin: calc(var(--lg-space) * 1.5) 0 0;
+}
+
+.zp-check strong {
+  color: var(--lg-accent-2);
+}
+
+/* --- Glow pulsante del número de ahorro al aterrizar el count-up --- */
+@keyframes zp-num-land {
+  0%   { text-shadow: var(--lg-glow); }
+  40%  { text-shadow: 0 0 38px rgba(53, 240, 160, 0.6), 0 0 70px rgba(53, 240, 160, 0.2); }
+  100% { text-shadow: var(--lg-glow); }
+}
+
+.zp-ahorro__num--land {
+  animation: zp-num-land 550ms ease-out 1;
+}
+
+/* Mismo remate para el anual, en el azul que le corresponde. Es el número que
+   salta al togglear el período, así que el destello es el que confirma el
+   cambio. */
+@keyframes zp-anual-land {
+  0%   { text-shadow: 0 0 22px rgba(77, 184, 255, 0.22); }
+  40%  { text-shadow: 0 0 34px rgba(77, 184, 255, 0.55), 0 0 60px rgba(77, 184, 255, 0.18); }
+  100% { text-shadow: 0 0 22px rgba(77, 184, 255, 0.22); }
+}
+
+.zp-anual__num--land {
+  animation: zp-anual-land 550ms ease-out 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .zp-ahorro__num--land,
+  .zp-anual__num--land {
+    animation: none;
+  }
+}

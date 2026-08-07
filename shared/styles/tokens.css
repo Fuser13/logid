@@ -1,0 +1,69 @@
+/* LogID — Design tokens comunes.
+   Doc 03: paleta dark, tipografías, tono visual cómic/gaming.
+   Lo consumen el hub y todos los módulos. */
+
+:root {
+  /* Superficies */
+  --lg-bg: #0a0b10;
+  --lg-surface: #12141d;
+  --lg-surface-2: #1a1d29;
+  --lg-line: #272b3a;
+
+  /* Texto */
+  --lg-text: #eef0f7;
+  --lg-text-dim: #99a0b5;
+
+  /* Acentos (cómic/gaming: neón sobre negro) */
+  --lg-accent: #35f0a0;
+  --lg-accent-2: #4db8ff;
+  --lg-danger: #ff4d6d;
+  --lg-warn: #ffc94d;
+
+  /* Tipografía */
+  --lg-font: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  --lg-font-mono: 'JetBrains Mono', 'Consolas', ui-monospace, monospace;
+
+  /* Escala */
+  --lg-space: 8px;
+  --lg-radius: 14px;
+  --lg-maxw: 1080px;
+
+  /* Efectos */
+  --lg-glow: 0 0 24px rgba(53, 240, 160, 0.28);
+  --lg-shadow: 0 8px 28px rgba(0, 0, 0, 0.45);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--lg-bg);
+  color: var(--lg-text);
+  font-family: var(--lg-font);
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  color: var(--lg-accent-2);
+}
+
+/* --- Canvas de partículas (identidad visual, shared/) --- */
+.lg-particles {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+
+body { overflow-x: hidden; }
+
+/* Contenido sube sobre el canvas de partículas. */
+body > header,
+body > main,
+body > footer {
+  position: relative;
+  z-index: 1;
+}
