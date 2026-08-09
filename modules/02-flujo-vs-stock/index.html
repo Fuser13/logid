@@ -225,13 +225,15 @@
       <div class="read rate" id="read-rate">
         <div class="rk">Flujo bien medido</div>
         <div class="rt">Tasas de operación</div>
-        <div class="rate-grid">
+        <div class="fx" style="margin-top:10px"><span>Remanente</span><span>=</span><span class="n">Llegada</span><span>−</span><span class="n">Despacho</span></div>
+        <div class="rate-grid" style="margin-top:6px">
           <div class="r">Llegada <b id="r-in">0/h</b></div>
           <div class="r">Despacho <b id="r-out">0/h</b></div>
           <div class="r rem">Remanente <b id="r-rem" class="pos">0/h</b></div>
           <div class="r">En piso <b id="r-wip">0</b></div>
         </div>
         <div class="spark"><svg id="spark" preserveAspectRatio="none"></svg></div>
+        <div class="sub">Este escalar dicta la acción: un remanente positivo es la alerta temprana para inyectar recursos antes de saturar.</div>
       </div>
       <div class="read stock" id="read-stock">
         <span class="badge">✓ consistente</span>
@@ -239,6 +241,7 @@
         <div class="rt">La foto real</div>
         <div class="big"><b id="stock-num">0</b><span>en operación</span></div>
         <div class="fx"><span>0</span><span>+</span><span class="n" id="fx-in">0</span><span>ent.</span><span>−</span><span class="n" id="fx-out">0</span><span>sal.</span><span>=</span><span class="eq" id="fx-stock">0</span></div>
+        <div class="sub" style="margin-top:14px">Cada constante es auditoría pura. Las entradas reales y salidas accionan capacidad de m² ignorando el ruido interno.</div>
       </div>
     </div>
 
