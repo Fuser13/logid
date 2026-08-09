@@ -1,0 +1,217 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Flujo vs. stock — LogID</title>
+    <meta name="description" content="Laboratorio interactivo sobre la diferencia entre flujo y stock.">
+    <link rel="stylesheet" href="../../shared/styles/tokens.css">
+    <link rel="stylesheet" href="../../shared/shell/shell.css">
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <header class="lg-header">
+      <div class="lg-wrap lg-header__bar">
+        <a class="lg-logo" href="../../index.html" style="text-decoration: none; color: inherit">
+          <span class="lg-logo__mark">Log<span style="color: var(--lg-text)">ID</span></span>
+          <span class="lg-logo__tag">Módulo 02 · Flujo vs. stock</span>
+        </a>
+        <div class="lg-company">
+          <span class="lg-company__label">Empresa</span>
+          <input class="lg-company__input" type="text" data-brand-company-input aria-label="Nombre de la empresa protagonista" placeholder="NanoCargo" maxlength="24">
+          <button class="lg-company__reset" data-brand-company-reset type="button" title="Volver al valor inicial">reset</button>
+        </div>
+      </div>
+    </header>
+
+    <main class="lg-wrap fv-main">
+      <section class="fv-intro lg-stagger">
+        <a class="fv-back" href="../../index.html">← volver al laboratorio</a>
+        <p class="fv-eyebrow">Módulo 02 · flujo vs. stock</p>
+        <h1 data-glitch>La operación vista como <span>flujo</span></h1>
+        <p>Seguimos los envíos ficticios de <strong>NanoCargo</strong> mientras atraviesan la operación. Compará qué ocurre al contar filas de eventos y al preservar la identidad de cada envío.</p>
+      </section>
+
+      <section class="fv-event-controls lg-stagger shared-controls" aria-label="Controles compartidos de eventos">
+        <div><p class="fv-eyebrow">Simulación compartida</p><span id="event-progress">0 transiciones aplicadas</span></div>
+        <div class="fv-event-actions"><button id="advance-event" type="button">Avanzar evento <kbd>→</kbd></button><button id="autoplay" type="button" aria-pressed="false">Autoplay</button></div>
+      </section>
+
+      <nav class="fv-tabs-nav lg-stagger" aria-label="Navegación del módulo">
+        <button type="button" class="fv-tab-btn active" data-tab="flujo">Flujo</button>
+        <button type="button" class="fv-tab-btn" data-tab="stock">Stock</button>
+        <button type="button" class="fv-tab-btn" data-tab="formulas">Fórmulas</button>
+      </nav>
+
+      <div class="fv-tabs-content lg-stagger">
+        <!-- TAB: FLUJO -->
+        <div class="fv-tab-pane active" id="tab-flujo">
+          <section class="fv-controls" aria-label="Controles de la simulación">
+            <label class="fv-count-control" for="shipment-count">
+              <span>Envíos a simular</span>
+              <input id="shipment-count" type="number" min="10" max="500" step="1" value="50" inputmode="numeric">
+              <small>10–500 · misma seed, resultados reproducibles</small>
+            </label>
+            <button class="fv-download" id="download-data" type="button">Descargar Excel <span>.csv</span></button>
+          </section>
+
+          <section class="fv-kpis" aria-label="Indicadores de flujo">
+            <article class="fv-kpi fv-kpi--total"><span>Total de envíos</span><strong id="kpi-total">0</strong></article>
+            <article class="fv-kpi fv-kpi--pending"><span>Pendiente</span><strong id="kpi-pendiente">0%</strong><small id="kpi-pendiente-count">0 envíos</small></article>
+            <article class="fv-kpi fv-kpi--prepared"><span>Preparado</span><strong id="kpi-preparado">0%</strong><small id="kpi-preparado-count">0 envíos</small></article>
+            <article class="fv-kpi fv-kpi--dispatched"><span>Despachado</span><strong id="kpi-despachado">0%</strong><small id="kpi-despachado-count">0 envíos</small></article>
+          </section>
+
+          <section class="fv-panel fv-flow-panel" id="flow-panel" aria-labelledby="flow-title">
+            <div class="fv-panel__head">
+              <div>
+                <p class="fv-eyebrow">Flujo mal medido</p>
+                <h2 id="flow-title">Cuenta tablas, no identidades</h2>
+              </div>
+              <p class="fv-live"><i></i> evento a evento</p>
+            </div>
+            <p class="fv-flow-status" id="flow-status" aria-live="polite">Sin desfasaje todavía: cada envío tiene un único registro.</p>
+            <div class="fv-drift-counter" id="flow-counter" aria-live="polite">
+              <strong id="flow-record-count">50</strong>
+              <span>registros</span>
+            </div>
+            <div class="fv-kanban" id="flow-kanban" aria-label="Envíos agrupados por estado"></div>
+          </section>
+
+          <section class="fv-data-grid">
+            <aside class="fv-panel fv-zones" aria-labelledby="zones-title">
+              <div class="fv-panel__head">
+                <div>
+                  <p class="fv-eyebrow">Desglose</p>
+                  <h2 id="zones-title">Envíos por zona</h2>
+                </div>
+              </div>
+              <div id="zone-breakdown" class="fv-zone-breakdown"></div>
+            </aside>
+
+            <section class="fv-panel fv-table-panel" aria-labelledby="table-title">
+              <div class="fv-panel__head fv-table-head">
+                <div>
+                  <p class="fv-eyebrow">Dataset ficticio</p>
+                  <h2 id="table-title">Detalle de envíos</h2>
+                </div>
+                <div class="fv-filters">
+                  <label>Estado
+                    <select id="filter-state"><option value="all">Todos</option></select>
+                  </label>
+                  <label>Zona
+                    <select id="filter-zone"><option value="all">Todas</option></select>
+                  </label>
+                </div>
+              </div>
+              <div class="fv-table-wrap">
+                <table>
+                  <thead><tr><th>Envío</th><th>Cliente</th><th>Zona</th><th>Bultos</th><th>Peso</th><th>Estado</th><th>Trazabilidad</th></tr></thead>
+                  <tbody id="shipment-table-body"></tbody>
+                </table>
+              </div>
+              <p class="fv-results-count" id="table-results" aria-live="polite"></p>
+            </section>
+          </section>
+        </div>
+
+        <!-- TAB: STOCK -->
+        <div class="fv-tab-pane" id="tab-stock">
+          <section class="fv-comparison-side-by-side">
+            <!-- Counter Flujo (Rojo) -->
+            <div class="fv-panel fv-flow-panel" id="stock-tab-flow-panel">
+              <div class="fv-panel__head">
+                <div>
+                  <p class="fv-eyebrow">Registros de flujo (Duplicados)</p>
+                  <h2>Cuenta transaccional</h2>
+                </div>
+              </div>
+              <div class="fv-drift-counter fv-drift-counter--red" id="stock-flow-counter">
+                <strong id="stock-flow-record-count">50</strong>
+                <span>registros en tablas</span>
+              </div>
+            </div>
+            
+            <!-- Counter Stock (Verde) -->
+            <div class="fv-panel fv-stock-panel">
+              <div class="fv-panel__head">
+                <div>
+                  <p class="fv-eyebrow">Stock por identidad (Real)</p>
+                  <h2>Identidades físicas</h2>
+                </div>
+                <span class="fv-stock-ok">✓ consistente</span>
+              </div>
+              <div class="fv-drift-counter fv-drift-counter--green">
+                <strong id="stock-identity-count">50</strong>
+                <span>identidades únicas</span>
+              </div>
+            </div>
+          </section>
+
+          <section class="fv-panel fv-stock-formula-panel">
+             <div class="fv-formula" aria-label="Fórmula de stock final">
+              <span>Stock final</span><b id="stock-final">0</b>
+              <div><em id="stock-initial">0</em><i>stock inicial</i></div><strong>+</strong>
+              <div><em id="stock-entries">0</em><i>entradas</i></div><strong>−</strong>
+              <div><em id="stock-exits">0</em><i>salidas</i></div>
+            </div>
+            <div class="fv-stock-audit">
+              <span>Identidades aún en operación</span><b id="stock-identities">0</b>
+              <span>Chequeo de fórmula</span><b id="stock-check">0 = 0</b>
+            </div>
+            <p class="fv-stock-note">Un envío sale de stock una sola vez, al pasar a despachado. Los cambios intermedios no lo duplican.</p>
+          </section>
+
+          <section class="fv-panel" aria-labelledby="stock-kanban-title">
+            <div class="fv-panel__head">
+              <div>
+                <p class="fv-eyebrow">Stock real</p>
+                <h2 id="stock-kanban-title">Kanban de Identidades</h2>
+              </div>
+            </div>
+            <div class="fv-kanban" id="stock-kanban" aria-label="Envíos agrupados por estado (Identidades)"></div>
+          </section>
+        </div>
+
+        <!-- TAB: FÓRMULAS -->
+        <div class="fv-tab-pane" id="tab-formulas">
+          <section class="fv-rate-panel" aria-labelledby="rate-title">
+            <div class="fv-rate-intro">
+              <p class="fv-eyebrow">Flujo bien medido</p>
+              <h2 id="rate-title">Tasas de operación</h2>
+              <p>El flujo sirve para leer velocidad: cuántos envíos llegan y cuántos se despachan por hora. No describe inventario; explica el ritmo con el que la operación acumula o vacía trabajo.</p>
+            </div>
+            <div class="fv-rate-controls">
+              <label for="arrival-rate"><span>Tasa de llegada</span><output id="arrival-rate-value">38 envíos/h</output><input id="arrival-rate" type="range" min="0" max="80" value="38" step="1"></label>
+              <label for="dispatch-rate"><span>Tasa de despacho</span><output id="dispatch-rate-value">30 envíos/h</output><input id="dispatch-rate" type="range" min="0" max="80" value="30" step="1"></label>
+            </div>
+            <div class="fv-rate-viz">
+              <div class="fv-rate-equation"><span>Remanente</span><b id="rate-delta">+8/h</b><small>= llegada − despacho</small></div>
+              <div class="fv-rate-remaining"><span>Trabajo pendiente simulado</span><strong id="rate-remainder">18,0</strong><small>envíos</small></div>
+              <svg id="rate-chart" viewBox="0 0 300 74" role="img" aria-label="Evolución del remanente operativo"><path id="rate-chart-area"></path><path id="rate-chart-line"></path></svg>
+            </div>
+            <p class="fv-rate-note"><strong>Clave:</strong> esto NO es lo mismo que stock. La tasa mide velocidad de operación; stock responde cuántas identidades hay en este momento.</p>
+          </section>
+
+          <section class="fv-explainer" aria-labelledby="why-title">
+            <p class="fv-eyebrow">Por qué importa</p>
+            <h2 id="why-title">Un cambio de estado no crea mercadería nueva</h2>
+            <p>En el panel de flujo, el envío deja una fila en la tabla anterior y suma otra en la nueva. Parece que hay más movimiento —y más envíos—, pero es la misma identidad registrada dos veces. Cuantos más cambios ocurren, más grande se vuelve el desfasaje.</p>
+            <p>Stock hace otra pregunta: “¿cuántas identidades hay ahora?”. Por eso parte de un saldo, suma solo las entradas reales y resta solo las salidas reales. Preparar un envío cambia su estado, no la cantidad de mercadería.</p>
+            <p>Usá los controles para avanzar la historia. La alerta roja prueba el error en el momento exacto en que aparece; el chequeo verde mantiene la cuenta trazable, incluso cuando la operación se mueve.</p>
+          </section>
+        </div>
+      </div>
+    </main>
+
+    <footer class="lg-footer lg-wrap">
+      <span>LogID · Módulo 02 · <span data-shell-year>2026</span></span>
+      <span>Simulación para <span data-brand-company>NanoCargo</span> · datos ficticios.</span>
+    </footer>
+
+    <script src="../../shared/branding/brand.js"></script>
+    <script src="../../shared/shell/shell.js"></script>
+    <script src="../../shared/particles/particles.js"></script>
+    <script type="module" src="flowPanel.js"></script>
+  </body>
+</html>
