@@ -1,217 +1,590 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="es">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Flujo vs. stock — LogID</title>
-    <meta name="description" content="Laboratorio interactivo sobre la diferencia entre flujo y stock.">
-    <link rel="stylesheet" href="../../shared/styles/tokens.css">
-    <link rel="stylesheet" href="../../shared/shell/shell.css">
-    <link rel="stylesheet" href="styles.css">
-  </head>
-  <body>
-    <header class="lg-header">
-      <div class="lg-wrap lg-header__bar">
-        <a class="lg-logo" href="../../index.html" style="text-decoration: none; color: inherit">
-          <span class="lg-logo__mark">Log<span style="color: var(--lg-text)">ID</span></span>
-          <span class="lg-logo__tag">Módulo 02 · Flujo vs. stock</span>
-        </a>
-        <div class="lg-company">
-          <span class="lg-company__label">Empresa</span>
-          <input class="lg-company__input" type="text" data-brand-company-input aria-label="Nombre de la empresa protagonista" placeholder="NanoCargo" maxlength="24">
-          <button class="lg-company__reset" data-brand-company-reset type="button" title="Volver al valor inicial">reset</button>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Flujo vs. Stock — LogID</title>
+<!-- shared/ : tokens + shell del hub -->
+<link rel="stylesheet" href="../../shared/styles/tokens.css?v=2">
+<link rel="stylesheet" href="../../shared/shell/shell.css?v=2">
+<style>
+  :root{
+    --bg: var(--lg-bg);
+    --panel: var(--lg-surface-2);
+    --panel-border: var(--lg-line);
+    --text: var(--lg-text);
+    --text-dim: var(--lg-text-dim);
+    --label: var(--lg-accent-2);
+    --accent: var(--lg-accent);
+    --accent-dim: rgba(53,240,160,.5);
+    --danger: var(--lg-danger);
+    --danger-dim: rgba(255,77,109,.5);
+    --amber: var(--lg-warn);
+    --amber-dim: rgba(255,201,77,.5);
+    --blue: var(--lg-accent-2);
+    --mono: var(--lg-font-mono);
+    --sans: var(--lg-font);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{
+    background:
+      radial-gradient(1100px 600px at 78% -8%, rgba(46,230,166,.06), transparent 60%),
+      radial-gradient(900px 500px at 8% 108%, rgba(80,140,200,.05), transparent 60%),
+      var(--bg);
+    color:var(--text);font-family:var(--sans);line-height:1.55;
+    -webkit-font-smoothing:antialiased;min-height:100vh;overflow-x:hidden;
+  }
+
+  .topbar{position:relative;z-index:2;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:16px 26px;flex-wrap:wrap;border-bottom:1px solid var(--panel-border);background:linear-gradient(180deg,rgba(10,16,24,.7),rgba(10,16,24,.15))}
+  .brand{display:flex;align-items:baseline;gap:12px}
+  .brand .logo{font-family:var(--mono);font-weight:700;font-size:1.25rem;letter-spacing:1px}
+  .brand .logo b{color:var(--accent)}
+  .brand .sub{font-family:var(--mono);font-size:.72rem;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim)}
+  .company{display:flex;align-items:center;gap:10px;border:1px solid var(--panel-border);border-radius:10px;padding:7px 12px;background:var(--panel);backdrop-filter:blur(6px)}
+  .company label{font-family:var(--mono);font-size:.66rem;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim)}
+  .company input{background:transparent;border:none;color:var(--accent);font-family:var(--mono);font-weight:700;font-size:.9rem;width:118px;outline:none}
+  .company button{background:transparent;border:1px solid var(--panel-border);border-radius:7px;color:var(--text-dim);font-family:var(--mono);font-size:.72rem;padding:4px 9px;cursor:pointer;transition:.15s}
+  .company button:hover{color:var(--text);border-color:var(--accent-dim)}
+
+  .wrap{position:relative;z-index:1;max-width:1200px;margin:0 auto;padding:32px 26px 60px}
+  .back{display:inline-block;font-family:var(--mono);font-size:.8rem;color:var(--text-dim);text-decoration:none;margin-bottom:22px;transition:.15s}
+  .back:hover{color:var(--accent)}
+  .eyebrow{font-family:var(--mono);font-size:.74rem;letter-spacing:3px;text-transform:uppercase;color:var(--label);margin-bottom:12px}
+  h1.hero{font-size:clamp(2.1rem,5vw,3.5rem);line-height:1.03;font-weight:800;letter-spacing:-.02em;margin:0 0 16px}
+  h1.hero em{font-style:normal;color:var(--accent);text-shadow:0 0 34px rgba(46,230,166,.4)}
+  .lede{max-width:670px;color:var(--text-dim);font-size:1.04rem;margin:0 0 26px}
+  .lede b{color:var(--text)}
+
+  .tabs{display:flex;gap:4px;border:1px solid var(--panel-border);border-radius:12px;padding:5px;background:var(--panel);backdrop-filter:blur(6px);width:max-content;max-width:100%;margin-bottom:22px}
+  .tab-btn{appearance:none;background:transparent;border:none;cursor:pointer;font-family:var(--mono);font-size:.82rem;letter-spacing:1px;color:var(--text-dim);padding:9px 22px;border-radius:8px;transition:.18s}
+  .tab-btn:hover{color:var(--text)}
+  .tab-btn.active{color:var(--accent);background:rgba(46,230,166,.1);box-shadow:inset 0 0 0 1px var(--accent-dim)}
+  .pane{display:none}
+  .pane.active{display:block;animation:fade .3s ease}
+  @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+  .panel{background:var(--panel);border:1px solid var(--panel-border);border-radius:16px;padding:20px 22px;backdrop-filter:blur(10px);box-shadow:0 20px 50px -30px rgba(0,0,0,.8)}
+  .panel .kicker{font-family:var(--mono);font-size:.66rem;letter-spacing:2.5px;text-transform:uppercase;color:var(--label)}
+  .panel h3{margin:4px 0 0;font-size:1.12rem;font-weight:700}
+  .mt16{margin-top:16px}
+
+  .readings{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+  .read{position:relative;overflow:hidden;border-radius:15px;padding:16px 18px;border:1px solid var(--panel-border);background:var(--panel);backdrop-filter:blur(8px)}
+  .read .rk{font-family:var(--mono);font-size:.64rem;letter-spacing:1.6px;text-transform:uppercase;color:var(--label)}
+  .read .rt{font-size:.98rem;font-weight:700;margin-top:2px}
+  .read .badge{position:absolute;top:14px;right:15px;font-family:var(--mono);font-size:.64rem;padding:3px 9px;border-radius:20px}
+  .read.flow{border-color:var(--danger-dim);box-shadow:0 0 0 1px var(--danger-dim),0 20px 46px -30px rgba(255,92,108,.7)}
+  .read.rate{border-color:var(--amber-dim);box-shadow:0 0 0 1px var(--amber-dim),0 20px 46px -30px rgba(255,182,72,.55)}
+  .read.stock{border-color:var(--accent-dim);box-shadow:0 0 0 1px var(--accent-dim),0 20px 46px -30px rgba(46,230,166,.6)}
+  .read.stock .badge{color:var(--accent);border:1px solid var(--accent-dim);background:rgba(46,230,166,.08)}
+  .read .big{font-family:var(--mono);font-weight:800;font-size:2.5rem;line-height:1;margin-top:12px;display:flex;align-items:baseline;gap:9px}
+  .read.flow .big b{color:var(--danger)} .read.stock .big b{color:var(--accent)}
+  .read .big span{font-family:var(--mono);font-size:.78rem;font-weight:500;color:var(--text-dim)}
+  .read .sub{font-family:var(--mono);font-size:.76rem;color:var(--text-dim);margin-top:8px}
+  .read.flow.pulse{animation:pRed .5s ease}
+  @keyframes pRed{40%{box-shadow:0 0 0 2px var(--danger),0 0 42px -6px rgba(255,92,108,.85)}}
+
+  .rate-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px 14px;margin-top:12px;font-family:var(--mono)}
+  .rate-grid .r{display:flex;justify-content:space-between;font-size:.82rem;color:var(--text-dim);padding:3px 0;border-bottom:1px solid rgba(255,255,255,.05)}
+  .rate-grid .r b{color:var(--text)}
+  .rate-grid .r.rem b.pos{color:var(--amber)} .rate-grid .r.rem b.neg{color:var(--accent)}
+  .spark{margin-top:10px;height:34px;width:100%}
+  .spark svg{display:block;width:100%;height:100%}
+
+  .fx{font-family:var(--mono);display:flex;align-items:baseline;gap:7px;margin-top:12px;flex-wrap:wrap;font-size:.8rem;color:var(--text-dim)}
+  .fx .n{color:var(--text);font-weight:700}
+  .fx .eq{color:var(--accent);font-weight:800;font-size:1rem}
+
+  .boardwrap{margin-top:16px}
+  .board{display:grid;grid-template-columns:1fr 34px 1fr 34px 1fr;align-items:stretch;margin-top:14px}
+  .arrow{display:flex;align-items:center;justify-content:center;color:var(--text-dim);font-size:1.1rem;font-family:var(--mono)}
+  .col{border:1px solid var(--panel-border);border-radius:14px;background:rgba(255,255,255,.02);display:flex;flex-direction:column;overflow:hidden;position:relative}
+  .col::after{content:"";position:absolute;inset:0;pointer-events:none;border-radius:14px;background:linear-gradient(120deg,transparent 40%,rgba(255,255,255,.04) 50%,transparent 60%);background-size:220% 100%;animation:sheen 6s linear infinite;opacity:.6}
+  @keyframes sheen{0%{background-position:120% 0}100%{background-position:-120% 0}}
+  .col-head{display:flex;align-items:center;justify-content:space-between;padding:11px 14px;border-bottom:1px solid var(--panel-border);position:relative;z-index:1}
+  .col-head .nm{display:flex;align-items:center;gap:8px;font-family:var(--mono);font-size:.72rem;letter-spacing:1.4px;text-transform:uppercase;color:var(--label)}
+  .dot{width:8px;height:8px;border-radius:50%;background:var(--label);box-shadow:0 0 10px currentColor}
+  .col[data-col=preparado] .dot{background:var(--amber);color:var(--amber)}
+  .col[data-col=preparado] .nm{color:var(--amber)}
+  .col[data-col=despachado] .dot{background:var(--accent);color:var(--accent)}
+  .col[data-col=despachado] .nm{color:var(--accent)}
+  .col-head .ct{font-family:var(--mono);font-size:.74rem;color:var(--text-dim)}
+  .col-body{position:relative;z-index:1;padding:12px;display:flex;flex-direction:column;gap:8px;min-height:322px}
+
+  .tok{border:1px solid var(--panel-border);border-left:3px solid var(--label);border-radius:9px;padding:8px 11px;background:rgba(11,17,27,.85);will-change:transform,opacity}
+  .col[data-col=preparado] .tok{border-left-color:var(--amber)}
+  .col[data-col=despachado] .tok{border-left-color:var(--accent)}
+  .tok .tid{font-family:var(--mono);font-size:.8rem;font-weight:700}
+  .tok .tz{font-size:.7rem;color:var(--text-dim);margin-top:1px}
+
+  .controls{display:flex;align-items:center;gap:14px;flex-wrap:wrap;justify-content:space-between;margin-top:16px}
+  .cluster{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  .cfield{display:flex;align-items:center;gap:8px}
+  .cfield label{font-family:var(--mono);font-size:.66rem;letter-spacing:1.5px;text-transform:uppercase;color:var(--label)}
+  .cfield input[type=number]{width:78px;background:rgba(0,0,0,.35);border:1px solid var(--panel-border);border-radius:8px;color:var(--text);font-family:var(--mono);font-size:.9rem;padding:7px 10px;outline:none}
+  .cfield input:focus{border-color:var(--accent-dim)}
+  .btn{appearance:none;cursor:pointer;font-family:var(--mono);font-size:.82rem;letter-spacing:.4px;padding:9px 15px;border-radius:10px;border:1px solid var(--panel-border);background:rgba(255,255,255,.03);color:var(--text);transition:.15s}
+  .btn:hover{border-color:var(--accent-dim);color:var(--accent)}
+  .btn.primary{background:var(--accent);color:#052018;border-color:transparent;font-weight:700}
+  .btn.primary:hover{box-shadow:0 0 22px -4px var(--accent);color:#052018}
+  .btn:disabled{opacity:.4;cursor:not-allowed}
+  .speeds{display:flex;border:1px solid var(--panel-border);border-radius:9px;overflow:hidden}
+  .speeds button{appearance:none;background:transparent;border:none;cursor:pointer;color:var(--text-dim);font-family:var(--mono);font-size:.78rem;padding:8px 12px;transition:.15s}
+  .speeds button.active{background:rgba(46,230,166,.14);color:var(--accent)}
+  .prog{font-family:var(--mono);font-size:.78rem;color:var(--text-dim);text-align:right}
+  .prog .clock{color:var(--text)}
+
+  .legend{display:flex;gap:20px;flex-wrap:wrap;margin-top:14px;font-family:var(--mono);font-size:.74rem;color:var(--text-dim)}
+  .legend .lg{display:flex;align-items:center;gap:7px}
+  .legend .sw{width:11px;height:11px;border-radius:3px}
+  .legend .sw.r{background:var(--danger)} .legend .sw.a{background:var(--amber)} .legend .sw.g{background:var(--accent)}
+
+  .explain{margin-top:16px}
+  .explain p{color:var(--text-dim);margin:0 0 11px;font-size:.92rem}
+  .explain p:last-child{margin-bottom:0}
+  .explain b{color:var(--text)}
+
+  .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+  .kpi{border:1px solid var(--panel-border);border-radius:13px;padding:15px 17px;background:rgba(255,255,255,.02)}
+  .kpi .t{font-size:.82rem;color:var(--text-dim)}
+  .kpi .n{font-family:var(--mono);font-weight:800;font-size:1.65rem;margin-top:8px}
+  .kpi .s{font-size:.74rem;color:var(--text-dim);margin-top:2px}
+  .kpi.total{border-left:3px solid var(--blue)} .kpi.total .n{color:var(--blue)}
+  .kpi.pen{border-left:3px solid var(--amber)} .kpi.pen .n{color:var(--amber)}
+  .kpi.pre{border-left:3px solid #69c7e0} .kpi.pre .n{color:#69c7e0}
+  .kpi.des{border-left:3px solid var(--accent)} .kpi.des .n{color:var(--accent)}
+  .zone-row{display:flex;align-items:center;gap:12px;padding:9px 0;border-bottom:1px solid rgba(255,255,255,.05)}
+  .zone-row:last-child{border-bottom:none}
+  .zone-row .zn{flex:1;font-size:.9rem} .zone-row .zc{font-family:var(--mono);font-size:.85rem;color:var(--text-dim)}
+  .zone-bar{height:4px;border-radius:3px;background:linear-gradient(90deg,var(--accent),#69c7e0);margin-top:5px}
+  .table-tools{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap}
+  .selects{display:flex;gap:16px}
+  .sel{display:flex;flex-direction:column;gap:5px}
+  .sel label{font-family:var(--mono);font-size:.66rem;letter-spacing:2px;text-transform:uppercase;color:var(--label)}
+  .sel select{background:rgba(0,0,0,.35);border:1px solid var(--panel-border);border-radius:8px;color:var(--text);font-family:var(--mono);font-size:.82rem;padding:7px 10px;outline:none}
+  .table-scroll{margin-top:14px;max-height:440px;overflow:auto;border:1px solid var(--panel-border);border-radius:12px}
+  table{width:100%;border-collapse:collapse;font-size:.85rem}
+  thead th{position:sticky;top:0;background:#0c1420;text-align:left;font-family:var(--mono);font-size:.66rem;letter-spacing:1.5px;text-transform:uppercase;color:var(--label);padding:11px 14px;border-bottom:1px solid var(--panel-border)}
+  tbody td{padding:12px 14px;border-bottom:1px solid rgba(255,255,255,.045);vertical-align:top}
+  tbody tr:hover{background:rgba(255,255,255,.02)}
+  .idcell .id{font-family:var(--mono);color:var(--blue);font-weight:700}
+  .idcell .rem{font-family:var(--mono);font-size:.72rem;color:var(--text-dim);margin-top:2px}
+  .pill{display:inline-block;font-family:var(--mono);font-size:.68rem;padding:3px 10px;border-radius:20px;border:1px solid}
+  .pill.pendiente{color:var(--amber);border-color:var(--amber-dim);background:rgba(255,182,72,.08)}
+  .pill.preparado{color:#69c7e0;border-color:rgba(105,199,224,.5);background:rgba(105,199,224,.08)}
+  .pill.despachado{color:var(--accent);border-color:var(--accent-dim);background:rgba(46,230,166,.08)}
+  .trz{font-family:var(--mono);font-size:.72rem;color:var(--text-dim);line-height:1.7}
+  .visible-note{font-family:var(--mono);font-size:.74rem;color:var(--text-dim);margin-top:10px}
+
+  footer{position:relative;z-index:1;max-width:1200px;margin:0 auto;padding:26px;border-top:1px solid var(--panel-border);font-family:var(--mono);font-size:.76rem;color:var(--text-dim)}
+
+  @media(max-width:860px){
+    .readings{grid-template-columns:1fr}
+    .board{grid-template-columns:1fr;gap:10px}
+    .arrow{display:none}
+    .kpis{grid-template-columns:1fr 1fr}
+    .col-body{min-height:auto}
+    .grid-datos{grid-template-columns:1fr!important}
+  }
+  @media(prefers-reduced-motion:reduce){
+    .col::after{animation:none}
+  }
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand"><span class="logo">Log<b>ID</b></span><span class="sub">Módulo 02 · Flujo vs. stock</span></div>
+  <div class="company">
+    <label for="empresa">Empresa</label>
+    <input id="empresa" type="text" value="NanoCargo" spellcheck="false" data-brand-company-input>
+    <button id="reset-emp" type="button" data-brand-company-reset>reset</button>
+  </div>
+</header>
+
+<main class="wrap">
+  <a class="back lg-stagger" href="../../index.html">← volver al laboratorio</a>
+  <div class="eyebrow lg-stagger">Módulo 02 · flujo vs. stock</div>
+  <h1 class="hero lg-stagger" data-glitch>La misma operación, leída como <em>flujo</em> y como stock</h1>
+  <p class="lede lg-stagger">Los envíos de <b class="emp" data-brand-company>NanoCargo</b> llegan y avanzan hasta despacho. Mirá la misma corriente con tres lentes a la vez: contar eventos <b>infla</b> la cifra, medir tasas describe el <b>ritmo</b>, y la identidad de inventario da la <b>foto real</b>.</p>
+
+  <nav class="tabs lg-stagger">
+    <button class="tab-btn active" data-tab="tab-sim">Simulación</button>
+    <button class="tab-btn" data-tab="tab-datos">Datos</button>
+  </nav>
+
+  <section id="tab-sim" class="pane active lg-stagger">
+    <div class="readings">
+      <div class="read flow" id="read-flow">
+        <div class="rk">Flujo mal medido</div>
+        <div class="rt">Cuenta cada evento</div>
+        <div class="big"><b id="flow-num">0</b><span>registros</span></div>
+        <div class="sub" id="flow-sub">Suma una fila por cada movimiento — duplica la carga.</div>
+      </div>
+      <div class="read rate" id="read-rate">
+        <div class="rk">Flujo bien medido</div>
+        <div class="rt">Tasas de operación</div>
+        <div class="rate-grid">
+          <div class="r">Llegada <b id="r-in">0/h</b></div>
+          <div class="r">Despacho <b id="r-out">0/h</b></div>
+          <div class="r rem">Remanente <b id="r-rem" class="pos">0/h</b></div>
+          <div class="r">En piso <b id="r-wip">0</b></div>
+        </div>
+        <div class="spark"><svg id="spark" preserveAspectRatio="none"></svg></div>
+      </div>
+      <div class="read stock" id="read-stock">
+        <span class="badge">✓ consistente</span>
+        <div class="rk">Stock por identidad</div>
+        <div class="rt">La foto real</div>
+        <div class="big"><b id="stock-num">0</b><span>en operación</span></div>
+        <div class="fx"><span>0</span><span>+</span><span class="n" id="fx-in">0</span><span>ent.</span><span>−</span><span class="n" id="fx-out">0</span><span>sal.</span><span>=</span><span class="eq" id="fx-stock">0</span></div>
+      </div>
+    </div>
+
+    <div class="panel boardwrap mt16">
+      <div class="kicker">Operación en vivo</div>
+      <h3>Los envíos fluyen · las tarjetas se mueven, la carga no se duplica</h3>
+      <div class="board">
+        <div class="col" data-col="pendiente">
+          <div class="col-head"><span class="nm"><span class="dot"></span>Pendiente</span><span class="ct" id="ct-pendiente">0</span></div>
+          <div class="col-body" id="body-pendiente"></div>
+        </div>
+        <div class="arrow">→</div>
+        <div class="col" data-col="preparado">
+          <div class="col-head"><span class="nm"><span class="dot"></span>Preparado</span><span class="ct" id="ct-preparado">0</span></div>
+          <div class="col-body" id="body-preparado"></div>
+        </div>
+        <div class="arrow">→</div>
+        <div class="col" data-col="despachado">
+          <div class="col-head"><span class="nm"><span class="dot"></span>Despachado</span><span class="ct" id="ct-despachado">0</span></div>
+          <div class="col-body" id="body-despachado"></div>
         </div>
       </div>
-    </header>
 
-    <main class="lg-wrap fv-main">
-      <section class="fv-intro lg-stagger">
-        <a class="fv-back" href="../../index.html">← volver al laboratorio</a>
-        <p class="fv-eyebrow">Módulo 02 · flujo vs. stock</p>
-        <h1 data-glitch>La operación vista como <span>flujo</span></h1>
-        <p>Seguimos los envíos ficticios de <strong>NanoCargo</strong> mientras atraviesan la operación. Compará qué ocurre al contar filas de eventos y al preservar la identidad de cada envío.</p>
-      </section>
-
-      <section class="fv-event-controls lg-stagger shared-controls" aria-label="Controles compartidos de eventos">
-        <div><p class="fv-eyebrow">Simulación compartida</p><span id="event-progress">0 transiciones aplicadas</span></div>
-        <div class="fv-event-actions"><button id="advance-event" type="button">Avanzar evento <kbd>→</kbd></button><button id="autoplay" type="button" aria-pressed="false">Autoplay</button></div>
-      </section>
-
-      <nav class="fv-tabs-nav lg-stagger" aria-label="Navegación del módulo">
-        <button type="button" class="fv-tab-btn active" data-tab="flujo">Flujo</button>
-        <button type="button" class="fv-tab-btn" data-tab="stock">Stock</button>
-        <button type="button" class="fv-tab-btn" data-tab="formulas">Fórmulas</button>
-      </nav>
-
-      <div class="fv-tabs-content lg-stagger">
-        <!-- TAB: FLUJO -->
-        <div class="fv-tab-pane active" id="tab-flujo">
-          <section class="fv-controls" aria-label="Controles de la simulación">
-            <label class="fv-count-control" for="shipment-count">
-              <span>Envíos a simular</span>
-              <input id="shipment-count" type="number" min="10" max="500" step="1" value="50" inputmode="numeric">
-              <small>10–500 · misma seed, resultados reproducibles</small>
-            </label>
-            <button class="fv-download" id="download-data" type="button">Descargar Excel <span>.csv</span></button>
-          </section>
-
-          <section class="fv-kpis" aria-label="Indicadores de flujo">
-            <article class="fv-kpi fv-kpi--total"><span>Total de envíos</span><strong id="kpi-total">0</strong></article>
-            <article class="fv-kpi fv-kpi--pending"><span>Pendiente</span><strong id="kpi-pendiente">0%</strong><small id="kpi-pendiente-count">0 envíos</small></article>
-            <article class="fv-kpi fv-kpi--prepared"><span>Preparado</span><strong id="kpi-preparado">0%</strong><small id="kpi-preparado-count">0 envíos</small></article>
-            <article class="fv-kpi fv-kpi--dispatched"><span>Despachado</span><strong id="kpi-despachado">0%</strong><small id="kpi-despachado-count">0 envíos</small></article>
-          </section>
-
-          <section class="fv-panel fv-flow-panel" id="flow-panel" aria-labelledby="flow-title">
-            <div class="fv-panel__head">
-              <div>
-                <p class="fv-eyebrow">Flujo mal medido</p>
-                <h2 id="flow-title">Cuenta tablas, no identidades</h2>
-              </div>
-              <p class="fv-live"><i></i> evento a evento</p>
-            </div>
-            <p class="fv-flow-status" id="flow-status" aria-live="polite">Sin desfasaje todavía: cada envío tiene un único registro.</p>
-            <div class="fv-drift-counter" id="flow-counter" aria-live="polite">
-              <strong id="flow-record-count">50</strong>
-              <span>registros</span>
-            </div>
-            <div class="fv-kanban" id="flow-kanban" aria-label="Envíos agrupados por estado"></div>
-          </section>
-
-          <section class="fv-data-grid">
-            <aside class="fv-panel fv-zones" aria-labelledby="zones-title">
-              <div class="fv-panel__head">
-                <div>
-                  <p class="fv-eyebrow">Desglose</p>
-                  <h2 id="zones-title">Envíos por zona</h2>
-                </div>
-              </div>
-              <div id="zone-breakdown" class="fv-zone-breakdown"></div>
-            </aside>
-
-            <section class="fv-panel fv-table-panel" aria-labelledby="table-title">
-              <div class="fv-panel__head fv-table-head">
-                <div>
-                  <p class="fv-eyebrow">Dataset ficticio</p>
-                  <h2 id="table-title">Detalle de envíos</h2>
-                </div>
-                <div class="fv-filters">
-                  <label>Estado
-                    <select id="filter-state"><option value="all">Todos</option></select>
-                  </label>
-                  <label>Zona
-                    <select id="filter-zone"><option value="all">Todas</option></select>
-                  </label>
-                </div>
-              </div>
-              <div class="fv-table-wrap">
-                <table>
-                  <thead><tr><th>Envío</th><th>Cliente</th><th>Zona</th><th>Bultos</th><th>Peso</th><th>Estado</th><th>Trazabilidad</th></tr></thead>
-                  <tbody id="shipment-table-body"></tbody>
-                </table>
-              </div>
-              <p class="fv-results-count" id="table-results" aria-live="polite"></p>
-            </section>
-          </section>
+      <div class="controls">
+        <div class="cluster">
+          <div class="cfield"><label for="count-input">Envíos</label><input id="count-input" type="number" min="10" max="500" step="10" value="50"></div>
+          <button class="btn primary" id="btn-play">Reproducir ▶</button>
+          <button class="btn" id="btn-step">Paso →</button>
+          <button class="btn" id="btn-reset">Reiniciar</button>
+          <div class="speeds" id="speeds">
+            <button data-sp="1" class="active">1×</button>
+            <button data-sp="2">2×</button>
+            <button data-sp="4">4×</button>
+          </div>
         </div>
-
-        <!-- TAB: STOCK -->
-        <div class="fv-tab-pane" id="tab-stock">
-          <section class="fv-comparison-side-by-side">
-            <!-- Counter Flujo (Rojo) -->
-            <div class="fv-panel fv-flow-panel" id="stock-tab-flow-panel">
-              <div class="fv-panel__head">
-                <div>
-                  <p class="fv-eyebrow">Registros de flujo (Duplicados)</p>
-                  <h2>Cuenta transaccional</h2>
-                </div>
-              </div>
-              <div class="fv-drift-counter fv-drift-counter--red" id="stock-flow-counter">
-                <strong id="stock-flow-record-count">50</strong>
-                <span>registros en tablas</span>
-              </div>
-            </div>
-            
-            <!-- Counter Stock (Verde) -->
-            <div class="fv-panel fv-stock-panel">
-              <div class="fv-panel__head">
-                <div>
-                  <p class="fv-eyebrow">Stock por identidad (Real)</p>
-                  <h2>Identidades físicas</h2>
-                </div>
-                <span class="fv-stock-ok">✓ consistente</span>
-              </div>
-              <div class="fv-drift-counter fv-drift-counter--green">
-                <strong id="stock-identity-count">50</strong>
-                <span>identidades únicas</span>
-              </div>
-            </div>
-          </section>
-
-          <section class="fv-panel fv-stock-formula-panel">
-             <div class="fv-formula" aria-label="Fórmula de stock final">
-              <span>Stock final</span><b id="stock-final">0</b>
-              <div><em id="stock-initial">0</em><i>stock inicial</i></div><strong>+</strong>
-              <div><em id="stock-entries">0</em><i>entradas</i></div><strong>−</strong>
-              <div><em id="stock-exits">0</em><i>salidas</i></div>
-            </div>
-            <div class="fv-stock-audit">
-              <span>Identidades aún en operación</span><b id="stock-identities">0</b>
-              <span>Chequeo de fórmula</span><b id="stock-check">0 = 0</b>
-            </div>
-            <p class="fv-stock-note">Un envío sale de stock una sola vez, al pasar a despachado. Los cambios intermedios no lo duplican.</p>
-          </section>
-
-          <section class="fv-panel" aria-labelledby="stock-kanban-title">
-            <div class="fv-panel__head">
-              <div>
-                <p class="fv-eyebrow">Stock real</p>
-                <h2 id="stock-kanban-title">Kanban de Identidades</h2>
-              </div>
-            </div>
-            <div class="fv-kanban" id="stock-kanban" aria-label="Envíos agrupados por estado (Identidades)"></div>
-          </section>
-        </div>
-
-        <!-- TAB: FÓRMULAS -->
-        <div class="fv-tab-pane" id="tab-formulas">
-          <section class="fv-rate-panel" aria-labelledby="rate-title">
-            <div class="fv-rate-intro">
-              <p class="fv-eyebrow">Flujo bien medido</p>
-              <h2 id="rate-title">Tasas de operación</h2>
-              <p>El flujo sirve para leer velocidad: cuántos envíos llegan y cuántos se despachan por hora. No describe inventario; explica el ritmo con el que la operación acumula o vacía trabajo.</p>
-            </div>
-            <div class="fv-rate-controls">
-              <label for="arrival-rate"><span>Tasa de llegada</span><output id="arrival-rate-value">38 envíos/h</output><input id="arrival-rate" type="range" min="0" max="80" value="38" step="1"></label>
-              <label for="dispatch-rate"><span>Tasa de despacho</span><output id="dispatch-rate-value">30 envíos/h</output><input id="dispatch-rate" type="range" min="0" max="80" value="30" step="1"></label>
-            </div>
-            <div class="fv-rate-viz">
-              <div class="fv-rate-equation"><span>Remanente</span><b id="rate-delta">+8/h</b><small>= llegada − despacho</small></div>
-              <div class="fv-rate-remaining"><span>Trabajo pendiente simulado</span><strong id="rate-remainder">18,0</strong><small>envíos</small></div>
-              <svg id="rate-chart" viewBox="0 0 300 74" role="img" aria-label="Evolución del remanente operativo"><path id="rate-chart-area"></path><path id="rate-chart-line"></path></svg>
-            </div>
-            <p class="fv-rate-note"><strong>Clave:</strong> esto NO es lo mismo que stock. La tasa mide velocidad de operación; stock responde cuántas identidades hay en este momento.</p>
-          </section>
-
-          <section class="fv-explainer" aria-labelledby="why-title">
-            <p class="fv-eyebrow">Por qué importa</p>
-            <h2 id="why-title">Un cambio de estado no crea mercadería nueva</h2>
-            <p>En el panel de flujo, el envío deja una fila en la tabla anterior y suma otra en la nueva. Parece que hay más movimiento —y más envíos—, pero es la misma identidad registrada dos veces. Cuantos más cambios ocurren, más grande se vuelve el desfasaje.</p>
-            <p>Stock hace otra pregunta: “¿cuántas identidades hay ahora?”. Por eso parte de un saldo, suma solo las entradas reales y resta solo las salidas reales. Preparar un envío cambia su estado, no la cantidad de mercadería.</p>
-            <p>Usá los controles para avanzar la historia. La alerta roja prueba el error en el momento exacto en que aparece; el chequeo verde mantiene la cuenta trazable, incluso cuando la operación se mueve.</p>
-          </section>
-        </div>
+        <div class="prog"><span id="prog-events">0 / 0 eventos</span> · <span class="clock" id="prog-clock">—</span></div>
       </div>
-    </main>
 
-    <footer class="lg-footer lg-wrap">
-      <span>LogID · Módulo 02 · <span data-shell-year>2026</span></span>
-      <span>Simulación para <span data-brand-company>NanoCargo</span> · datos ficticios.</span>
-    </footer>
+      <div class="legend">
+        <div class="lg"><span class="sw r"></span>rojo: registros de flujo (se infla)</div>
+        <div class="lg"><span class="sw a"></span>ámbar: tasas medidas del flujo</div>
+        <div class="lg"><span class="sw g"></span>verde: stock por identidad (real)</div>
+      </div>
+    </div>
 
-    <script src="../../shared/branding/brand.js"></script>
-    <script src="../../shared/shell/shell.js"></script>
-    <script src="../../shared/particles/particles.js"></script>
-    <script type="module" src="flowPanel.js"></script>
-  </body>
+    <div class="panel explain mt16">
+      <div class="kicker">Por qué importa</div>
+      <h3>Un cambio de estado no crea mercadería nueva</h3>
+      <p>Cuando medís lo que "entró" contando cada evento de la tabla, un envío que pasa de pendiente a preparado deja una fila y suma otra. Parece más movimiento —y más carga—, pero es la misma identidad registrada dos veces. Cuantos más cambios ocurren, más se infla el número rojo.</p>
+      <p>El <b>flujo bien medido</b> no cuenta filas: mide <b>tasas</b>. Cuántos llegan y cuántos se despachan por hora, y su diferencia (el remanente) te dice si la operación acumula o vacía trabajo. Es la lente correcta para leer el ritmo.</p>
+      <p>El <b>stock</b> responde otra pregunta: ¿cuántas identidades hay ahora? Por eso parte de un saldo, suma solo entradas reales y resta solo salidas reales: <b>inicial + entradas − salidas</b>. Preparar un envío cambia su estado, no la cantidad de mercadería. Por eso el verde nunca miente.</p>
+    </div>
+  </section>
+
+  <section id="tab-datos" class="pane lg-stagger">
+    <div class="panel">
+      <div class="table-tools">
+        <div><div class="kicker">Dataset ficticio</div><h3>Envíos generados · seed reproducible</h3></div>
+        <button class="btn primary" id="btn-csv">Descargar Excel .csv</button>
+      </div>
+    </div>
+    <div class="kpis mt16" id="kpis"></div>
+    <div class="grid-datos mt16" style="display:grid;grid-template-columns:340px 1fr;gap:16px">
+      <div class="panel">
+        <div class="kicker">Desglose</div><h3>Envíos por zona</h3>
+        <div id="zones" style="margin-top:12px"></div>
+      </div>
+      <div class="panel">
+        <div class="table-tools">
+          <div><div class="kicker">Detalle</div><h3>Trazabilidad por envío</h3></div>
+          <div class="selects">
+            <div class="sel"><label for="f-estado">Estado</label><select id="f-estado"><option value="">Todos</option><option value="pendiente">Pendiente</option><option value="preparado">Preparado</option><option value="despachado">Despachado</option></select></div>
+            <div class="sel"><label for="f-zona">Zona</label><select id="f-zona"><option value="">Todas</option></select></div>
+          </div>
+        </div>
+        <div class="table-scroll"><table><thead><tr><th>Envío</th><th>Cliente</th><th>Zona</th><th>Bultos</th><th>Peso</th><th>Estado</th><th>Trazabilidad</th></tr></thead><tbody id="tbody"></tbody></table></div>
+        <div class="visible-note" id="visible-note"></div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer><b class="emp" style="color:var(--text-dim)" data-brand-company>NanoCargo</b> · LogID · Módulo 02 · datos ficticios, sin conexión a sistemas reales.</footer>
+
+<!-- scripts compartidos de LogID -->
+<script src="../../shared/branding/brand.js?v=2"></script>
+<script src="../../shared/shell/shell.js?v=2"></script>
+<script src="../../shared/particles/particles.js?v=2"></script>
+
+<script>
+(function(){
+  "use strict";
+  var REDUCED = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var CAP = 7;
+
+  function xmur3(s){var h=1779033703^s.length;for(var i=0;i<s.length;i++){h=Math.imul(h^s.charCodeAt(i),3432918353);h=h<<13|h>>>19;}return function(){h=Math.imul(h^h>>>16,2246822507);h=Math.imul(h^h>>>13,3266489909);return (h^=h>>>16)>>>0;};}
+  function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;var t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return ((t^t>>>14)>>>0)/4294967296;};}
+  function rng(seed){return mulberry32(xmur3(String(seed))());}
+
+  var ZONES=["Córdoba Capital","La Matanza","Rosario","Mendoza Centro","Quilmes","Tucumán","Mar del Plata","Lanús","Pilar","San Isidro"];
+  var SEED="logid-modulo-02", START=Date.parse("2026-01-12T05:00:00");
+  var $=function(id){return document.getElementById(id);};
+  function empresa(){return ($("empresa").value||"NanoCargo").trim();}
+  function cap(s){return s.charAt(0).toUpperCase()+s.slice(1);}
+  function fmt(ts){return new Date(ts).toLocaleString("es-AR",{day:"2-digit",month:"2-digit",year:"2-digit",hour:"2-digit",minute:"2-digit"});}
+
+  var shipments=[], events=[], applied=0, simClock=START, spanMs=1;
+  var arrTs=[], despTs=[], wipHist=[], prevRed=0;
+  var playing=false, rafId=0, lastFrame=0, perMs=0, speed=1;
+
+  function genShipments(count){
+    var r=rng(SEED), ri=function(a,b){return Math.floor(r()*(b-a+1))+a;};
+    var out=[], t=START;
+    for(var i=1;i<=count;i++){
+      t+=ri(4,20)*60000; var entered=t;
+      var ch=[{state:"pendiente",ts:entered}];
+      if(r()<0.78){var p=entered+ri(12,95)*60000; ch.push({state:"preparado",ts:p});
+        if(r()<0.66){var d=p+ri(18,150)*60000; ch.push({state:"despachado",ts:d});}}
+      var b=ri(1,15), pe=Math.round(b*(2+r()*6)*10)/10;
+      out.push({id:"NC-"+String(i).padStart(4,"0"),remito:"R-"+String(10000+i),zona:ZONES[ri(0,ZONES.length-1)],
+        bultos:b,peso:pe,changes:ch,finalState:ch[ch.length-1].state,present:false,stage:null,lastTs:0});
+    }
+    return out;
+  }
+  function buildEvents(){
+    events=[];
+    shipments.forEach(function(s,idx){ s.changes.forEach(function(c,k){ events.push({shipIdx:idx,ts:c.ts,type:(k===0?"arrival":"forward"),toState:c.state}); }); });
+    events.sort(function(a,b){return a.ts-b.ts;});
+    spanMs = events.length ? ((events[events.length-1].ts-events[0].ts)||1) : 1;
+    var dur = Math.max(34000, events.length * 160);
+    perMs = spanMs/dur;
+  }
+  function applyEvent(ev){
+    var s=shipments[ev.shipIdx];
+    if(ev.type==="arrival"){ s.present=true; s.stage="pendiente"; s.lastTs=ev.ts; arrTs.push(ev.ts); }
+    else { s.stage=ev.toState; s.lastTs=ev.ts; if(ev.toState==="despachado") despTs.push(ev.ts); }
+    applied++;
+  }
+
+  var tokEls={}, bodies={};
+  function makeToken(s){
+    var el=document.createElement("div"); el.className="tok"; el.style.opacity="0";
+    el.innerHTML='<div class="tid">'+s.id+'</div><div class="tz">'+s.zona+' · '+s.bultos+'b</div>';
+    return el;
+  }
+  function enterAnim(el){
+    if(REDUCED){el.style.opacity="1";el.style.transform="none";return;}
+    el.style.transition="none"; el.style.opacity="0"; el.style.transform="translateX(-16px) scale(.96)";
+    void el.offsetWidth;
+    el.style.transition="transform .45s cubic-bezier(.34,1.1,.35,1), opacity .45s ease";
+    el.style.opacity="1"; el.style.transform="translate(0,0)";
+  }
+  function exitAnim(id){
+    var el=tokEls[id]; delete tokEls[id];
+    if(REDUCED){ if(el.parentNode) el.parentNode.removeChild(el); return; }
+    var rc=el.getBoundingClientRect();
+    el.style.position="fixed"; el.style.left=rc.left+"px"; el.style.top=rc.top+"px";
+    el.style.width=rc.width+"px"; el.style.margin="0"; el.style.zIndex="6";
+    document.body.appendChild(el);
+    requestAnimationFrame(function(){
+      el.style.transition="transform .5s ease, opacity .5s ease";
+      el.style.transform="translate(42px,0) scale(.9)"; el.style.opacity="0";
+    });
+    setTimeout(function(){ if(el.parentNode) el.parentNode.removeChild(el); },560);
+  }
+  function desired(){
+    var pend=[],prep=[],desp=[];
+    shipments.forEach(function(s){ if(!s.present) return;
+      if(s.stage==="pendiente") pend.push(s); else if(s.stage==="preparado") prep.push(s); else desp.push(s); });
+    var byRecent=function(a,b){return b.lastTs-a.lastTs;};
+    pend.sort(byRecent); prep.sort(byRecent); desp.sort(byRecent);
+    return {pendiente:pend,preparado:prep,despachado:desp};
+  }
+  function renderBoard(){
+    var cols=desired();
+    var first={};
+    for(var id in tokEls){ first[id]=tokEls[id].getBoundingClientRect(); }
+    var want={};
+    ["pendiente","preparado","despachado"].forEach(function(col){
+      cols[col].slice(0,CAP).forEach(function(s){ want[s.id]=col; });
+    });
+    for(var id2 in tokEls){ if(!want[id2]) exitAnim(id2); }
+    var entering=[];
+    ["pendiente","preparado","despachado"].forEach(function(col){
+      var body=bodies[col];
+      cols[col].slice(0,CAP).forEach(function(s){
+        var el=tokEls[s.id];
+        if(!el){ el=makeToken(s); tokEls[s.id]=el; entering.push(s.id); }
+        body.appendChild(el);
+      });
+    });
+    setText("ct-pendiente", cols.pendiente.length);
+    setText("ct-preparado", cols.preparado.length);
+    setText("ct-despachado", despTs.length+" total");
+    for(var id3 in tokEls){
+      var el3=tokEls[id3];
+      if(entering.indexOf(id3)>=0){ enterAnim(el3); continue; }
+      var f=first[id3]; if(!f) continue;
+      var l=el3.getBoundingClientRect();
+      var dx=f.left-l.left, dy=f.top-l.top;
+      if((dx||dy) && !REDUCED){
+        el3.style.transition="none"; el3.style.transform="translate("+dx+"px,"+dy+"px)";
+        void el3.offsetWidth;
+        el3.style.transition="transform .5s cubic-bezier(.34,1.08,.35,1)";
+        el3.style.transform="translate(0,0)";
+      }
+    }
+  }
+
+  function countSince(arr,lo){ var n=0; for(var i=arr.length-1;i>=0;i--){ if(arr[i]>=lo) n++; else break; } return n; }
+  function updateStats(){
+    var entradas=arrTs.length, salidas=despTs.length, stock=entradas-salidas, flujo=applied;
+    setText("flow-num", flujo);
+    var dup=flujo-entradas;
+    setText("flow-sub", dup>0 ? ("Duplicados: "+dup+" — la misma carga contada de más.") : "Suma una fila por cada movimiento — duplica la carga.");
+    if(flujo>prevRed){ pulseRed(); } prevRed=flujo;
+    setText("stock-num", stock);
+    setText("fx-in", entradas); setText("fx-out", salidas); setText("fx-stock", stock);
+    var Wms=Math.max(spanMs*0.16, 30*60000), lo=simClock-Wms, hours=Wms/3600000;
+    var rin=Math.round(countSince(arrTs,lo)/hours), rout=Math.round(countSince(despTs,lo)/hours), rem=rin-rout;
+    setText("r-in", rin+"/h"); setText("r-out", rout+"/h"); setText("r-wip", stock);
+    var remEl=$("r-rem"); remEl.textContent=(rem>=0?"+":"")+rem+"/h"; remEl.className=(rem>0?"pos":"neg");
+    setText("prog-events", applied+" / "+events.length+" eventos");
+    setText("prog-clock", applied>0 ? fmt(simClock) : "—");
+  }
+  function pulseRed(){ var c=$("read-flow"); c.classList.remove("pulse"); void c.offsetWidth; c.classList.add("pulse"); }
+  function setText(id,v){ var e=$(id); if(e) e.textContent=v; }
+
+  function sampleWip(){ wipHist.push(arrTs.length-despTs.length); if(wipHist.length>64) wipHist.shift(); }
+  function drawSpark(){
+    var svg=$("spark"), box=svg.parentNode, W=box.clientWidth||240, H=box.clientHeight||34;
+    if(W<20){ return; }
+    if(wipHist.length<2){ svg.innerHTML=""; return; }
+    var max=1; wipHist.forEach(function(v){ if(v>max) max=v; });
+    var n=wipHist.length, sx=function(i){return i/(n-1)*W;}, sy=function(v){return H-2-(v/max)*(H-4);};
+    var d=wipHist.map(function(v,i){return (i?"L":"M")+sx(i).toFixed(1)+" "+sy(v).toFixed(1);}).join(" ");
+    var area=d+" L"+W+" "+H+" L0 "+H+" Z";
+    svg.setAttribute("viewBox","0 0 "+W+" "+H);
+    svg.innerHTML='<defs><linearGradient id="sg" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#ffb648" stop-opacity=".4"/><stop offset="100%" stop-color="#ffb648" stop-opacity="0"/></linearGradient></defs>'
+      +'<path d="'+area+'" fill="url(#sg)"/><path d="'+d+'" fill="none" stroke="#ffb648" stroke-width="1.6"/>';
+  }
+
+  function frame(ts){
+    if(!playing) return;
+    if(!lastFrame) lastFrame=ts;
+    var dt=ts-lastFrame; lastFrame=ts;
+    simClock += dt*perMs*speed;
+    var changed=false;
+    while(applied<events.length && events[applied].ts<=simClock){ applyEvent(events[applied]); changed=true; }
+    if(applied>=events.length){ simClock=events[events.length-1].ts; }
+    if(changed){ renderBoard(); sampleWip(); }
+    updateStats(); drawSpark();
+    if(applied>=events.length){ stopPlay(); return; }
+    rafId=requestAnimationFrame(frame);
+  }
+  function startPlay(){ if(playing) return; if(applied>=events.length) resetSim(); playing=true; lastFrame=0; $("btn-play").textContent="Pausar ❚❚"; rafId=requestAnimationFrame(frame); }
+  function stopPlay(){ playing=false; if(rafId) cancelAnimationFrame(rafId); $("btn-play").textContent="Reproducir ▶"; syncBtns(); }
+  function step(){ if(applied>=events.length) return; var ev=events[applied]; simClock=ev.ts; applyEvent(ev); renderBoard(); sampleWip(); updateStats(); drawSpark(); syncBtns(); }
+  function syncBtns(){ $("btn-step").disabled = applied>=events.length; }
+  function resetSim(){
+    stopPlay(); applied=0; arrTs=[]; despTs=[]; wipHist=[]; prevRed=0;
+    shipments.forEach(function(s){ s.present=false; s.stage=null; s.lastTs=0; });
+    for(var id in tokEls){ var el=tokEls[id]; if(el.parentNode) el.parentNode.removeChild(el); }
+    tokEls={};
+    simClock = events.length ? events[0].ts : START;
+    renderBoard(); updateStats(); drawSpark(); syncBtns();
+  }
+
+  function renderKpis(){
+    var total=shipments.length, c={pendiente:0,preparado:0,despachado:0};
+    shipments.forEach(function(s){ c[s.finalState]++; });
+    var p=function(n){return total?Math.round(n/total*100):0;};
+    $("kpis").innerHTML=
+      '<div class="kpi total"><div class="t">Total de envíos</div><div class="n">'+total+'</div><div class="s">dataset completo</div></div>'+
+      '<div class="kpi pen"><div class="t">Pendiente</div><div class="n">'+p(c.pendiente)+'%</div><div class="s">'+c.pendiente+' envíos</div></div>'+
+      '<div class="kpi pre"><div class="t">Preparado</div><div class="n">'+p(c.preparado)+'%</div><div class="s">'+c.preparado+' envíos</div></div>'+
+      '<div class="kpi des"><div class="t">Despachado</div><div class="n">'+p(c.despachado)+'%</div><div class="s">'+c.despachado+' envíos</div></div>';
+  }
+  function renderZones(){
+    var m={}; shipments.forEach(function(s){ m[s.zona]=(m[s.zona]||0)+1; });
+    var a=Object.keys(m).map(function(z){return {z:z,n:m[z]};}); a.sort(function(x,y){return y.n-x.n;});
+    var mx=a.length?a[0].n:1, h="";
+    a.forEach(function(o){ h+='<div><div class="zone-row"><span class="zn">'+o.z+'</span><span class="zc">'+o.n+'</span></div><div class="zone-bar" style="width:'+Math.round(o.n/mx*100)+'%"></div></div>'; });
+    $("zones").innerHTML=h;
+  }
+  function fillZoneFilter(){
+    var zs=[]; shipments.forEach(function(s){ if(zs.indexOf(s.zona)<0) zs.push(s.zona); }); zs.sort();
+    $("f-zona").innerHTML='<option value="">Todas</option>'+zs.map(function(z){return '<option value="'+z+'">'+z+'</option>';}).join("");
+  }
+  function renderTable(){
+    var fe=$("f-estado").value, fz=$("f-zona").value, emp=empresa();
+    var rows=shipments.filter(function(s){ return (!fe||s.finalState===fe)&&(!fz||s.zona===fz); });
+    var h="";
+    rows.forEach(function(s){
+      var trz=s.changes.map(function(c){return cap(c.state)+" · "+fmt(c.ts);}).join("<br>");
+      h+='<tr><td class="idcell"><div class="id">'+s.id+'</div><div class="rem">'+s.remito+'</div></td><td>'+emp+'</td><td>'+s.zona+'</td><td>'+s.bultos+'</td><td>'+String(s.peso).replace(".",",")+' kg</td><td><span class="pill '+s.finalState+'">'+cap(s.finalState)+'</span></td><td class="trz">'+trz+'</td></tr>';
+    });
+    $("tbody").innerHTML=h; setText("visible-note", rows.length+" de "+shipments.length+" envíos visibles");
+  }
+  function downloadCSV(){
+    var emp=empresa(), rows=[["Envio","Remito","Cliente","Zona","Bultos","Peso_kg","EstadoFinal","Trazabilidad"]];
+    shipments.forEach(function(s){ var trz=s.changes.map(function(c){return cap(c.state)+" "+fmt(c.ts);}).join(" | ");
+      rows.push([s.id,s.remito,emp,s.zona,s.bultos,String(s.peso).replace(".",","),cap(s.finalState),trz]); });
+    var csv=rows.map(function(r){return r.map(function(f){return '"'+String(f).replace(/"/g,'""')+'"';}).join(";");}).join("\r\n");
+    var blob=new Blob(["\ufeff"+csv],{type:"text/csv;charset=utf-8;"});
+    var a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download="nanocargo_envios_"+shipments.length+".csv";
+    document.body.appendChild(a); a.click(); a.remove(); setTimeout(function(){URL.revokeObjectURL(a.href);},1000);
+  }
+
+  function updateEmpresaLabels(){ var v=empresa(), s=document.querySelectorAll(".emp"); for(var i=0;i<s.length;i++) s[i].textContent=v; renderTable(); }
+
+  function regenerate(count){
+    count=Math.max(10,Math.min(500,count||50));
+    shipments=genShipments(count); buildEvents();
+    resetSim(); renderKpis(); renderZones(); fillZoneFilter(); renderTable();
+  }
+
+  function initTabs(){
+    var btns=document.querySelectorAll(".tab-btn"), panes=document.querySelectorAll(".pane");
+    btns.forEach(function(b){ b.addEventListener("click",function(){
+      btns.forEach(function(x){x.classList.remove("active");}); panes.forEach(function(p){p.classList.remove("active");});
+      b.classList.add("active"); var pn=$(b.dataset.tab); if(pn) pn.classList.add("active");
+      if(b.dataset.tab==="tab-sim") requestAnimationFrame(function(){ renderBoard(); drawSpark(); });
+    }); });
+  }
+
+  document.addEventListener("DOMContentLoaded",function(){
+    bodies={pendiente:$("body-pendiente"),preparado:$("body-preparado"),despachado:$("body-despachado")};
+    initTabs();
+    $("btn-play").addEventListener("click",function(){ if(playing) stopPlay(); else startPlay(); });
+    $("btn-step").addEventListener("click",step);
+    $("btn-reset").addEventListener("click",resetSim);
+    $("speeds").addEventListener("click",function(e){
+      var b=e.target.closest("button"); if(!b) return; speed=parseInt(b.dataset.sp,10);
+      this.querySelectorAll("button").forEach(function(x){x.classList.remove("active");}); b.classList.add("active");
+    });
+    $("count-input").addEventListener("change",function(){ regenerate(parseInt(this.value,10)); this.value=shipments.length; });
+    $("btn-csv").addEventListener("click",downloadCSV);
+    $("f-estado").addEventListener("change",renderTable);
+    $("f-zona").addEventListener("change",renderTable);
+    $("empresa").addEventListener("input",updateEmpresaLabels);
+    $("reset-emp").addEventListener("click",function(){ $("empresa").value="NanoCargo"; updateEmpresaLabels(); });
+    window.addEventListener("resize",function(){ drawSpark(); });
+    regenerate(50);
+  });
+})();
+</script>
+</body>
 </html>

@@ -6,13 +6,11 @@ const stateNames = { pendiente: 'Pendiente', preparado: 'Preparado', despachado:
 const stateInput = document.querySelector('#filter-state');
 const zoneInput = document.querySelector('#filter-zone');
 const countInput = document.querySelector('#shipment-count');
-const kanban = document.querySelector('#flow-kanban');
-const stockKanban = document.querySelector('#stock-kanban');
+const simulacionKanban = document.querySelector('#simulacion-kanban');
 const advanceButton = document.querySelector('#advance-event');
 const autoplayButton = document.querySelector('#autoplay');
 
-const tabBtns = document.querySelectorAll('.fv-tab-btn');
-const tabPanes = document.querySelectorAll('.fv-tab-pane');
+
 
 const arrivalInput = document.querySelector('#arrival-rate');
 const dispatchInput = document.querySelector('#dispatch-rate');
@@ -33,12 +31,16 @@ let chartData = Array(50).fill(18); // Start with initial remainder of 18
 let currentRemainder = 18.0;
 
 // Tab logic
-tabBtns.forEach(btn => {
-  btn.addEventListener('click', () => {
-    tabBtns.forEach(b => b.classList.remove('active'));
-    tabPanes.forEach(p => p.classList.remove('active'));
-    btn.classList.add('active');
-    document.getElementById(`tab-${btn.dataset.tab}`).classList.add('active');
+document.addEventListener('DOMContentLoaded', () => {
+  const buttons = document.querySelectorAll('.fv-tab-btn');
+  const panes = document.querySelectorAll('.fv-tab-pane');
+  buttons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      buttons.forEach(b => b.classList.remove('active'));
+      panes.forEach(p => p.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById(btn.dataset.tab).classList.add('active');
+    });
   });
 });
 
@@ -148,23 +150,10 @@ function renderZones() {
     </div>`).join('');
 }
 
-function renderKanban() {
+function renderSimulacionKanban() {
   const actual = realCounts();
-  kanban.innerHTML = STATES.map((state) => {
-    const visible = shipments.filter((shipment) => currentStates.get(shipment.id) === state).slice(0, 4);
-    const remaining = actual[state] - visible.length;
-    return `<section class="fv-lane fv-lane--${state}" data-state="${state}">
-      <header class="fv-lane__head"><span>${stateNames[state]}</span><b>${naiveCounts[state]} registros</b></header>
-      ${visible.map((shipment) => `<article class="fv-mini-card"><b>${shipment.id}</b><span>${shipment.zonaEntrega} · ${shipment.bultos} bultos</span></article>`).join('')}
-      ${remaining > 0 ? `<p class="fv-mini-card--more">+ ${remaining} identidades aquí</p>` : ''}
-    </section>`;
-  }).join('');
-}
-
-function renderStockKanban() {
-  const actual = realCounts();
-  if (!stockKanban) return;
-  stockKanban.innerHTML = STATES.map((state) => {
+  if (!simulacionKanban) return;
+  simulacionKanban.innerHTML = STATES.map((state) => {
     const visible = shipments.filter((shipment) => currentStates.get(shipment.id) === state).slice(0, 4);
     const remaining = actual[state] - visible.length;
     return `<section class="fv-lane fv-lane--${state}" data-state="${state}">
@@ -206,7 +195,7 @@ function renderTable() {
 function animateTransit(shipment, from, to) {
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
   
-  [kanban, stockKanban].forEach(targetKanban => {
+  [simulacionKanban].forEach(targetKanban => {
     if (!targetKanban) return;
     const source = targetKanban.querySelector(`[data-state="${from}"]`);
     const target = targetKanban.querySelector(`[data-state="${to}"]`);
@@ -243,8 +232,7 @@ function renderAll() {
   renderKpis();
   renderFlowStatus();
   renderStock();
-  renderKanban();
-  renderStockKanban();
+  renderSimulacionKanban();
   renderTable();
   document.querySelector('#event-progress').textContent = `${replayIndex} ${replayIndex === 1 ? 'transición aplicada' : 'transiciones aplicadas'} de ${replayEvents.length}`;
   advanceButton.disabled = replayIndex >= replayEvents.length;
