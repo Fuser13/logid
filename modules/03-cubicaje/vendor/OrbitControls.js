@@ -265,7 +265,19 @@ class OrbitControls extends EventDispatcher {
 
 				} else {
 
-					spherical.radius = clampDistance( spherical.radius * scale );
+					if ( scope.enableDamping === true ) {
+
+						const stepScale = 1 + ( scale - 1 ) * scope.dampingFactor;
+						spherical.radius = clampDistance( spherical.radius * stepScale );
+						scale = 1 + ( scale - 1 ) * ( 1 - scope.dampingFactor );
+						if ( Math.abs( scale - 1 ) < 0.0001 ) scale = 1;
+
+					} else {
+
+						spherical.radius = clampDistance( spherical.radius * scale );
+						scale = 1;
+
+					}
 
 				}
 
@@ -376,7 +388,7 @@ class OrbitControls extends EventDispatcher {
 
 				}
 
-				scale = 1;
+				if ( scope.enableDamping !== true ) scale = 1;
 				performCursorZoom = false;
 
 				// update condition is:
@@ -488,8 +500,12 @@ class OrbitControls extends EventDispatcher {
 
 		function getZoomScale( delta ) {
 
-			const normalized_delta = Math.abs( delta ) / ( 100 * ( window.devicePixelRatio | 0 ) );
-			return Math.pow( 0.95, scope.zoomSpeed * normalized_delta );
+			if ( delta === undefined || delta === null ) {
+				return Math.pow( 0.96, scope.zoomSpeed );
+			}
+			const absDelta = Math.abs( delta );
+			const norm = absDelta <= 4 ? 0.35 : ( absDelta <= 20 ? 0.6 : ( absDelta <= 120 ? 1.0 : Math.min( absDelta / 120, 2.5 ) ) );
+			return Math.pow( 0.96, scope.zoomSpeed * norm );
 
 		}
 
